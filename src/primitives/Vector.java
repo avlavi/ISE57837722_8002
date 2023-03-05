@@ -2,9 +2,9 @@ package primitives;
 
 public class
 Vector {
-    double i;
-    double i1;
-    double i2;
+    final double i;
+    final double i1;
+    final double i2;
 
     public Vector(int i, int i1, int i2) {
         this.i = i;
@@ -52,7 +52,7 @@ Vector {
     }
 
     public Vector normalize() {
-        Vector normalizedVector;
+        Vector normalizedVector( i =0,i1=0,i2=0;);
         double length = this.length();
         normalizedVector.i = this.i / length;
         normalizedVector.i1 = this.i1 / length;
