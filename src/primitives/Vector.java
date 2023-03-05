@@ -2,61 +2,75 @@ package primitives;
 
 public class
 Vector {
-    final double i;
-    final double i1;
-    final double i2;
+    Double3 coordinate;
 
-    public Vector(int i, int i1, int i2) {
-        this.i = i;
-        this.i1 = i1;
-        this.i2 = i2;
+    public Vector(Double3 coordinate) {
+        this.coordinate = new Double3(coordinate.d1, coordinate.d2, coordinate.d3);
+    }
+
+
+    public Vector(double i, double i1, double i2) {
+        this.coordinate = new Double3(i, i1, i2);
     }
 
     public double lengthSquared() {
-        return Math.pow(this.i, 2) +
-                Math.pow(this.i1, 2) +
-                Math.pow(this.i2, 2);
+        return this.coordinate.d1 * this.coordinate.d1 +
+                this.coordinate.d2 * this.coordinate.d2 +
+                this.coordinate.d3 * this.coordinate.d3;
     }
 
     public double length() {
-        return Math.sqrt(this.length());
+        return Math.sqrt(this.lengthSquared());
     }
 
     public Object add(Vector vector) {
-        Vector v1 (0,0,0);
-        v1.i = this.i + vector.i;
-        v1.i1 = this.i1 + vector.i1;
-        v1.i2 = this.i2 + vector.i2;
+        Vector v1 = new Vector(
+                this.coordinate.d1 + vector.coordinate.d1,
+                this.coordinate.d2 + vector.coordinate.d2,
+                this.coordinate.d3 + vector.coordinate.d3
+        );
         return v1;
     }
 
     public Object subtract(Vector v2) {
-        Vector v1;
-        v1.i = this.i - v2.i;
-        v1.i1 = this.i1 - v2.i1;
-        v1.i2 = this.i2 - v2.i2;
+        Vector v1 = new Vector(
+                this.coordinate.d1 - v2.coordinate.d1,
+                this.coordinate.d2 - v2.coordinate.d2,
+                this.coordinate.d3 - v2.coordinate.d3
+        );
         return v1;
     }
 
     public double dotProduct(Vector v3) {
-        double scalar = this.i * v3.i + this.i1 * v3.i1 + this.i2 * v3.i2;
+        double scalar = this.coordinate.d1 * v3.coordinate.d1 + this.coordinate.d2 * v3.coordinate.d2 + this.coordinate.d3 * v3.coordinate.d3;
         return scalar;
     }
 
     public Vector crossProduct(Vector v2) {
-        Vector result;
-        result.i = this.i1 * v2.i2 - this.i2 * v2.i1;
-        result.i1 = this.i2 * v2.i - this.i * v2.i2;
-        result.i2 = this.i * v2.i1 - this.i1 * v2.i;
+        Vector result = new Vector(
+                this.coordinate.d2 * v2.coordinate.d3 - this.coordinate.d3 * v2.coordinate.d2,
+                this.coordinate.d3 * v2.coordinate.d1 - this.coordinate.d1 * v2.coordinate.d3,
+                this.coordinate.d1 * v2.coordinate.d2 - this.coordinate.d2 * v2.coordinate.d1
+        );
         return result;
     }
 
     public Vector normalize() {
-        Vector normalizedVector( i =0,i1=0,i2=0;);
         double length = this.length();
-        normalizedVector.i = this.i / length;
-        normalizedVector.i1 = this.i1 / length;
-        normalizedVector.i2 = this.i2 / length;
+        Vector normalizedVector = new Vector(
+                this.coordinate.d1 / length,
+                this.coordinate.d2 / length,
+                this.coordinate.d3 / length
+        );
         return normalizedVector;
+    }
+
+    public Vector scale(double scalar) {
+        Vector result = new Vector(
+                this.coordinate.d1 * scalar,
+                this.coordinate.d2 * scalar,
+                this.coordinate.d3 * scalar
+        );
+        return result;
     }
 }
