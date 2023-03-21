@@ -12,7 +12,7 @@ public final class Main {
 
    /** Main program to tests initial functionality of the 1st stage
     * @param args irrelevant here */
-   public static void main(String[] args) {
+   public static void main(String[] args) {////hhh
 
       try { // test zero vector
          new Vector(0, 0, 0);
