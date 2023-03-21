@@ -3,7 +3,7 @@ package primitives;
 import java.util.Objects;
 
 public class Point {
-    Double3 coordinate;//the coordinate of the point(x,y,z)
+    final Double3 coordinate;//the coordinate of the point(x,y,z)
     /**
      * Constructs a new Point object with the specified coordinates.
      * @param d1 the x-coordinate
