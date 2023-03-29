@@ -91,7 +91,7 @@ public class Vector extends Point{
  Returns the normal vector of this vector and another vector.
  @param v2 the other vector.
  @return the normal vector of this vector and another vector.
- @throws NullPointerException if
+ @throws NullPointerException if the given vector is null.
  */
     public Vector crossProduct(Vector v2) {
         if (v2 == null) {
