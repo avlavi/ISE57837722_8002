@@ -9,7 +9,6 @@ import static primitives.Util.isZero;
 
 import org.junit.jupiter.api.Test;
 
-import geometries.Polygon;
 import primitives.Point;
 import primitives.Vector;
 
