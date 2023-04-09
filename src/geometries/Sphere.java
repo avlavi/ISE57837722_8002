@@ -12,7 +12,7 @@ public class Sphere extends RadialGeometry{
 
     @Override
     public Vector getNormal(Point point) {
-        Vector normal = point.subtract(center);
+        Vector normal = point.subtract(center);//the normal is the vector from the center of the sphere to the given point
         return normal.normalize();
     }
 

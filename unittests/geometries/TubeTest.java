@@ -19,21 +19,22 @@ class TubeTest {
      */
     @Test
     void testGetNormal() {
+        Tube tb = new Tube(1, new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)));
+
         // ============ Equivalence Partitions Tests ==============
-        Tube sph = new Tube(1, new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)));
         // ensure there are no exceptions
-        assertDoesNotThrow(() -> sph.getNormal(new Point(0,1, 2)), "");
+        assertDoesNotThrow(() -> tb.getNormal(new Point(0,1, 2)), "");
         // generate the test result
-        Vector result = sph.getNormal(new Point(0, 1, 2));
-        // ensure the result is orthogonal to the sphere
+        Vector result = tb.getNormal(new Point(0, 1, 2));
+        // ensure the result is orthogonal to the Tube
         assertEquals(new Vector(0, 1, 0), result, "Tube's normal is not normal to the Tube");
 
         // =============== Boundary Values Tests ==================
         // ensure there are no exceptions
-        assertDoesNotThrow(() -> sph.getNormal(new Point(0,1, 0)), "");
+        assertDoesNotThrow(() -> tb.getNormal(new Point(0,1, 0)), "");
         // generate the test result
-        result = sph.getNormal(new Point(0, 1, 0));
-        // ensure the result is orthogonal to the sphere
-        assertEquals(new Vector(0, 1, 0), result, "Tube's normal is not normal to the Tube when the point is in front of the hed of the ray");
+        result = tb.getNormal(new Point(0, 1, 0));
+        // ensure the result is orthogonal to the Tube
+        assertEquals(new Vector(0, 1, 0), result, "Tube's normal is not normal to the Tube when the point is in front of the head of the ray");
     }
 }

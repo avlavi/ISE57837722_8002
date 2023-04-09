@@ -18,6 +18,7 @@ class TriangleTest {
      */
     @Test
     void testTestGetNormal() {
+        // TC01: Test getNormal() on an ordinary triangle
         Triangle tr = new Triangle(new Point(1, 0, 0), new Point(0, 1, 0), new Point(0, 0, 1));
         // ============ Equivalence Partitions Tests ==============
         // ensure there are no exceptions
@@ -25,7 +26,7 @@ class TriangleTest {
         // generate the test result
         Vector result = tr.getNormal(new Point(1, 0, 0));
         // ensure |result| = 1
-        assertEquals(1, result.length(), 0.00000001, "plane's normal is not a unit vector");
+        assertEquals(1, result.length(), 0.00000001, "Triangle's normal is not a unit vector");
         // ensure the result is orthogonal to all the edges
         assertTrue(isZero(result.dotProduct(new Point(0, 1, 0).subtract(new Point(1, 0, 0)))),
                 "Triangle's normal is not orthogonal to one of the Triangle's edges");

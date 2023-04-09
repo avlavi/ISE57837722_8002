@@ -19,8 +19,9 @@ class SphereTest {
      */
     @Test
     void testGetNormal() {
-        // ============ Equivalence Partitions Tests ==============
+        // TC01: Test getNormal() on an ordinary sphere
         Sphere sph = new Sphere(1, new Point(0, 0, 0));
+        // ============ Equivalence Partitions Tests ==============
         // ensure there are no exceptions
         assertDoesNotThrow(() -> sph.getNormal(new Point(0, 0, 1)), "");
         // generate the test result

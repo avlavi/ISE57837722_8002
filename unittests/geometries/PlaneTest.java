@@ -23,8 +23,11 @@ class PlaneTest {
         // ============ Equivalence Partitions Tests ==============
 
         // =============== Boundary Values Tests ==================
+        // TC01: Constructed a plane whit to similar points
 assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0), new Point(1, 0, 0), new Point(0, 0, 1)),
         "Constructed a plane whit to similar points");
+
+        // TC02: Constructed a plane when the 3 points are on the same line
         assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(0, 0, 0), new Point(1, 1, 0), new Point(2, 2, 0)),
                 "Constructed a plane when the 3 points are on the same line");
     }
@@ -34,6 +37,7 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
      */
     @Test
     void testTestGetNormal() {
+        // TC01: Test getNormal() on an ordinary plane
         Plane pl = new Plane(new Point(1, 0, 0), new Point(0, 1, 0), new Point(0, 0, 1));
         // ============ Equivalence Partitions Tests ==============
         // ensure there are no exceptions
@@ -42,7 +46,7 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
         Vector result = pl.getNormal(new Point(1, 0, 0));
         // ensure |result| = 1
         assertEquals(1, result.length(), 0.00000001, "plane's normal is not a unit vector");
-        // ensure the result is orthogonal to all the edges
+        // ensure the result is orthogonal to the plane's vectors
             assertTrue(isZero(result.dotProduct(new Point(0, 1, 0).subtract(new Point(1, 0, 0)))),
                     "plane's normal is not orthogonal to one of the plane's vectors");
         assertTrue(isZero(result.dotProduct(new Point(0, 0, 1).subtract(new Point(1, 0, 0)))),
