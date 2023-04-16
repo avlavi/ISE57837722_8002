@@ -53,4 +53,16 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
                 "plane's normal is not orthogonal to one of the plane's vectors");
         // =============== Boundary Values Tests ==================
     }
+
+    /**
+     * Test method for {@link .geometries.Plane#FindIntsersections(.geometries.Plane)}.
+     */
+    @Test
+    void testFindIntsersections() {
+        // ============ Equivalence Partitions Tests ==============
+
+
+        // =============== Boundary Values Tests ==================
+
+    }
 }

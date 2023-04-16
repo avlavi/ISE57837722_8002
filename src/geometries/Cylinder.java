@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 public class Cylinder extends Tube {
     double height;//The height of the cylinder
 
@@ -23,5 +25,10 @@ public class Cylinder extends Tube {
         if (point.equals(p0) || point.equals(upperPoint) || v.dotProduct(point.subtract(p0)) == 0 || v.dotProduct(point.subtract(upperPoint)) == 0)
             return axisRay.getDir();
         return super.getNormal(point);//else, the point is on the body of the cylinder so use the father(Tube) to calculate the normal
+    }
+
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return null;
     }
 }

@@ -1,7 +1,10 @@
 package geometries;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 public class Sphere extends RadialGeometry{
     Point center;//center point of the sphere
@@ -18,5 +21,10 @@ public class Sphere extends RadialGeometry{
 
     public Point getCenter() {//return the center point of the sphere
         return center;
+    }
+
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return null;
     }
 }

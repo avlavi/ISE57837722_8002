@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 public class Tube extends RadialGeometry {
     Ray axisRay;//The direction vector of the tube
 
@@ -31,4 +33,8 @@ public class Tube extends RadialGeometry {
         return axisRay;
     }
 
+    @Override
+    public List<Point> findIntsersections(Ray ray) {
+        return null;
+    }
 }
