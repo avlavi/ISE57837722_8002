@@ -9,7 +9,7 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Testing geometries.Plane
+ * Testing geometries.Plan
  *
  * @author Shilo and Aviad
  */
