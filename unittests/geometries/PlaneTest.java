@@ -9,7 +9,7 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Testing geometries.Plane
+ * Testing geometries.Plan
  *
  * @author Shilo and Aviad
  */
@@ -55,7 +55,7 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
     }
 
     /**
-     * Test method for {@link .geometries.Plane#FindIntsersections(.geometries.Plane)}.
+     * Test method for {@link .geometries.Plane#findIntsersections(.geometries.Plane)}.
      */
     @Test
     void testFindIntsersections() {
