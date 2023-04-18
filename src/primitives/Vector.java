@@ -5,52 +5,33 @@ import java.util.Objects;
 
  Represents a vector in 3D space.
 
- Extends the Point class, with a coordinate property.
+ Extends the Point class, with a xyz property.
  */
 public class Vector extends Point{
 
     /**
 
      Creates a Vector object from a Double3 object.
-     @param coordinate the coordinate of the vector, as a Double3 object.
+     @param xyz the xyz of the vector, as a Double3 object.
      @throws IllegalArgumentException if the given vector is zero.
      */
-    Vector(Double3 coordinate) {
-        super(coordinate);
-        if (coordinate.equals(coordinate.ZERO))
+    Vector(Double3 xyz) {
+        super(xyz);
+        if (xyz.equals(xyz.ZERO))
             throw new IllegalArgumentException("The given vector is zero");
     }
     /**
 
      Creates a Vector object from three double values.
-     @param i the first coordinate of the vector.
-     @param i1 the second coordinate of the vector.
-     @param i2 the third coordinate of the vector.
+     @param i the first xyz of the vector.
+     @param i1 the second xyz of the vector.
+     @param i2 the third xyz of the vector.
      @throws IllegalArgumentException if the given vector is zero.
      */
     public Vector(double i, double i1, double i2) {
         super(i, i1, i2);
-        if (coordinate.equals(coordinate.ZERO))
+        if (xyz.equals(xyz.ZERO))
             throw new IllegalArgumentException("The given vector is zero");
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Vector vector = (Vector) o;
-
-        return coordinate.equals(vector.coordinate);
-    }
-    @Override
-    public int hashCode() {
-        return coordinate != null ? coordinate.hashCode() : 0;
-    }
-    @Override
-    public String toString() {
-        return "Vector{" +
-                coordinate.toString() +
-                '}';
     }
     /**
 
@@ -58,9 +39,9 @@ public class Vector extends Point{
      @return the squared length of the vector.
      */
     public double lengthSquared() {
-        return this.coordinate.d1 * this.coordinate.d1 +
-                this.coordinate.d2 * this.coordinate.d2 +
-                this.coordinate.d3 * this.coordinate.d3;
+        return this.xyz.d1 * this.xyz.d1 +
+                this.xyz.d2 * this.xyz.d2 +
+                this.xyz.d3 * this.xyz.d3;
     }
     /**
 
@@ -80,12 +61,7 @@ public class Vector extends Point{
      */
     @Override
     public Vector add(Vector vector) {
-        if (vector == null) {
-            throw new NullPointerException("The given vector is null");
-        }
-        Vector v1 = new Vector(this.coordinate.add(vector.coordinate));
-        if (v1.coordinate.equals(coordinate.ZERO))
-            throw new ArithmeticException("The result vector of the addition is zero");
+        Vector v1 = new Vector(this.xyz.add(vector.xyz));
         return v1;
     }
     /**
@@ -96,9 +72,7 @@ public class Vector extends Point{
      @throws IllegalArgumentException if the scalar is zero.
      */
     public Vector scale(double scalar) {
-        if (scalar == 0)
-            throw new IllegalArgumentException("Cannot scale a vector by 0");
-        Vector result = new Vector(coordinate.scale(scalar));
+        Vector result = new Vector(xyz.scale(scalar));
         return result;
     }
     /**
@@ -109,10 +83,7 @@ public class Vector extends Point{
      @throws NullPointerException if the given vector is null.
      */
     public double dotProduct(Vector v3) {
-        if (v3 == null) {
-            throw new NullPointerException("The given vector is null");
-        }
-        double scalar = this.coordinate.d1 * v3.coordinate.d1 + this.coordinate.d2 * v3.coordinate.d2 + this.coordinate.d3 * v3.coordinate.d3;
+        double scalar = this.xyz.d1 * v3.xyz.d1 + this.xyz.d2 * v3.xyz.d2 + this.xyz.d3 * v3.xyz.d3;
         return scalar;
     }
 /**
@@ -120,18 +91,18 @@ public class Vector extends Point{
  Returns the normal vector of this vector and another vector.
  @param v2 the other vector.
  @return the normal vector of this vector and another vector.
- @throws NullPointerException if
+ @throws NullPointerException if the given vector is null.
  */
     public Vector crossProduct(Vector v2) {
         if (v2 == null) {
             throw new NullPointerException("The given vector is null");
         }
         Vector result = new Vector(
-                this.coordinate.d2 * v2.coordinate.d3 - this.coordinate.d3 * v2.coordinate.d2,
-                this.coordinate.d3 * v2.coordinate.d1 - this.coordinate.d1 * v2.coordinate.d3,
-                this.coordinate.d1 * v2.coordinate.d2 - this.coordinate.d2 * v2.coordinate.d1
+                this.xyz.d2 * v2.xyz.d3 - this.xyz.d3 * v2.xyz.d2,
+                this.xyz.d3 * v2.xyz.d1 - this.xyz.d1 * v2.xyz.d3,
+                this.xyz.d1 * v2.xyz.d2 - this.xyz.d2 * v2.xyz.d1
         );
-        if (result.coordinate.equals(coordinate.ZERO))
+        if (result.xyz.equals(xyz.ZERO))
             throw new ArithmeticException("The normal vector is zero");
         return result;
     }
@@ -146,10 +117,29 @@ public class Vector extends Point{
         double length = this.length();
 
         Vector normalizedVector = new Vector(
-                this.coordinate.d1 / length,
-                this.coordinate.d2 / length,
-                this.coordinate.d3 / length
+                this.xyz.d1 / length,
+                this.xyz.d2 / length,
+                this.xyz.d3 / length
         );
         return normalizedVector;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vector vector = (Vector) o;
+
+        return xyz.equals(vector.xyz);
+    }
+    @Override
+    public int hashCode() {
+        return xyz != null ? xyz.hashCode() : 0;
+    }
+    @Override
+    public String toString() {
+        return "Vector{" +
+                xyz.toString() +
+                '}';
     }
 }

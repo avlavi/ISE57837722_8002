@@ -6,14 +6,22 @@ package primitives;
 import java.util.Objects;
 
 public class Ray {
-    Point p0;//the starting point of the ray
-    Vector dir;//the direction vector of the ray
+    final Point p0;//The starting point of the ray
+    final Vector dir;//The direction vector of the ray
 
     public Ray(Point p0, Vector dir) {//con
         if(dir == null)
             throw new NullPointerException("The given vector is null");
         this.p0 = p0;
         this.dir = dir.normalize();
+    }
+
+    public Point getP0() {//return p0
+        return p0;
+    }
+
+    public Vector getDir() {//return dir
+        return dir;
     }
 
     @Override
@@ -40,11 +48,7 @@ public class Ray {
                 '}';
     }
 
-    public Point getP0() {//return p0
-        return p0;
-    }
-
-    public Vector getDir() {//return dir
-        return dir;
+    public Point getPoint(double t){
+        return p0.add(dir.scale(t));
     }
 }
