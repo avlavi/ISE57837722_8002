@@ -6,8 +6,9 @@ import primitives.Vector;
 
 import java.util.*;
 
-public class Sphere extends RadialGeometry{
+public class Sphere extends RadialGeometry {
     Point center;//center point of the sphere
+
     public Sphere(double radius, Point center) {//con
         super(radius);
         this.center = center;
@@ -25,6 +26,26 @@ public class Sphere extends RadialGeometry{
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        Point p0 = ray.getP0();
+        Vector dir = ray.getDir();
+        if (center.equals(p0))
+            return List.of(ray.getPoint(radius));
+        Vector u = center.subtract(p0);
+        //if (u.length() < radius)הקרן בתוך הספרה
+        double tm = dir.dotProduct(u);
+        if (tm == 0)//משיק לספרה
+            return null;
+        double d = Math.sqrt(u.lengthSquared() - (tm * tm));
+        if (d >= radius) return null;
+        double th = Math.sqrt(radius * radius - d * d);
+        double t1 = tm + th;
+        double t2 = tm - th;
+        if (t1 < 0 && t2 < 0)
+            return null;
+        if (t1 < 0 && t2 > 0)
+            return List.of(ray.getPoint(t2));
+        if (t1 > 0 && t2 < 0)
+            return List.of(ray.getPoint(t1));
+        return List.of(ray.getPoint(t1), ray.getPoint(t2));
     }
 }

@@ -85,4 +85,7 @@ public class Point {
         return "Point{" + xyz.toString() + '}';
     }
 
+    public double getX() {
+        return xyz.d1;
+    }
 }

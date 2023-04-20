@@ -10,7 +10,7 @@ public class Triangle extends Polygon{
         super(p1,p2,p3);
     }
     @Override
-    public List<Point> findIntsersections(Ray ray) {
+    public List<Point> findIntersections(Ray ray) {
         return null;
     }
 }
