@@ -4,6 +4,11 @@ import java.util.Objects;
 
 public class Point {
     final Double3 xyz;//the coordinate of the point(x,y,z)
+
+    public Double3 getXyz() {
+        return xyz;
+    }
+
     /**
      * Constructs a new Point object with the specified coordinates.
      * @param d1 the x-coordinate

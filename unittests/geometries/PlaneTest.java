@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static primitives.Util.isZero;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 /**
  * Testing geometries.Plan
@@ -58,11 +61,44 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
      * Test method for {@link .geometries.Plane#findIntsersections(.geometries.Plane)}.
      */
     @Test
-    void testFindIntsersections() {
+    void testFindIntersections() {
+        Plane plane = new Plane(new Point(0,0,1),new Point(1,0,1),new Point(0,1,1));
         // ============ Equivalence Partitions Tests ==============
-
-
+        //The Ray must be neither orthogonal nor parallel to the plane
+        //TC01: Ray intersects the plane (1 point)
+        Point p1 = new Point(1, 0, 1);
+        List<Point> result = plane.findIntersections(new Ray(new Point(2, 0, 0), new Vector(-2, 1, 1)));
+        assertEquals(1, result.size(), "Wrong number of points");
+        //TC02: Ray does not intersect the plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(1, 0, 0), new Vector(-1, 0, -1))),
+                "Ray's line out of sphere");
         // =============== Boundary Values Tests ==================
-
+        // **** Group: Ray is parallel to the plane
+        // TC03: Ray included in the plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(0, 2, 1), new Vector(0, -1, 0))),
+                "Ray's line out of sphere");
+        // TC04: Ray not included in the plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(0, 1, 0.5), new Vector(0, -1, 0))),
+                "Ray's line out of sphere");
+        // **** Group: Ray is orthogonal to the plane
+        // TC05: Ray start before plane (1 point)
+        p1 = new Point(0, 1, 1);
+        result = plane.findIntersections(new Ray(new Point(0, 1, 0.5), new Vector(0, 0, 0.5)));
+        assertEquals(1, result.size(), "Wrong number of points");
+        // TC06: Ray start in  plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(0, 1, 1), new Vector(0, 0, 0.5))),
+                "Ray's line out of sphere");
+        // TC06: Ray start after  plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(0, 1, 2), new Vector(0, 0, 0.5))),
+                "Ray's line out of sphere");
+        // **** Group: Ray is neither orthogonal nor parallel to and begins at the plane
+        // TC07: not the same point which appears as reference point in the plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(2, 0, 1), new Vector(-2, 0, 2))),
+                "Ray's line out of sphere");
+        // TC08: the same point which appears as reference point in the plane (0 point)
+        assertNull(plane.findIntersections(new Ray(new Point(1, 0, 1), new Vector(-2, 0, 2))),
+                "Ray's line out of sphere");
     }
+
+
 }

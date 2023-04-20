@@ -36,4 +36,9 @@ class TriangleTest {
                 "Triangle's normal is not orthogonal to one of the Triangle's edges");
         // =============== Boundary Values Tests ==================
     }
+
+    @Test
+    void findIntsersections() {
+
+    }
 }

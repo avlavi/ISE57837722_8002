@@ -4,7 +4,7 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
-import java.util.List;
+import java.util.*;
 
 public class Sphere extends RadialGeometry{
     Point center;//center point of the sphere
@@ -24,7 +24,7 @@ public class Sphere extends RadialGeometry{
     }
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
+    public List<Point> findIntersections(Ray ray) {
         return null;
     }
 }

@@ -5,6 +5,7 @@ import primitives.Vector;
 import primitives.Point;
 import java.util.List;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 public class Plane implements Geometry {
@@ -30,7 +31,12 @@ public class Plane implements Geometry {
     public Vector getNormal(Point point) {  return normal;}
 
     @Override
-    public List<Point> findIntsersections(Ray ray) {
+    public List<Point> findIntersections(Ray ray) {
+        Vector rayToNormal= this.q0.subtract(ray.getP0());
+        double numerator=this.normal.dotProduct(rayToNormal);
+        double denominator=this.normal.dotProduct(ray.getDir());
+        double t=alignZero(numerator/denominator) ;
+        if (t>0) {Point p1= ray.getPoint(t);}
         return null;
     }
 }
