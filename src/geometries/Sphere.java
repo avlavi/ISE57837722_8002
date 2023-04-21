@@ -6,6 +6,8 @@ import primitives.Vector;
 
 import java.util.*;
 
+import static primitives.Util.alignZero;
+
 public class Sphere extends RadialGeometry {
     Point center;//center point of the sphere
 
@@ -40,6 +42,7 @@ public class Sphere extends RadialGeometry {
         double th = Math.sqrt(radius * radius - d * d);
         double t1 = tm + th;
         double t2 = tm - th;
+        alignZero(t1); alignZero(t2);
         if (t1 < 0 && t2 < 0)
             return null;
         if (t1 < 0 && t2 > 0)
