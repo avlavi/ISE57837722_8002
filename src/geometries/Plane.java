@@ -39,9 +39,15 @@ public class Plane implements Geometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        Vector rayToNormal = q0.subtract(ray.getP0());
-        double numerator = normal.dotProduct(rayToNormal);
-        double denominator = normal.dotProduct(ray.getDir());
+        if (ray.getP0().equals(this.q0)){
+            return null;
+        }
+        Vector rayToNormal = this.q0.subtract(ray.getP0());
+        double numerator = this.normal.dotProduct(rayToNormal);
+        double denominator = this.normal.dotProduct(ray.getDir());
+        if (isZero(denominator)) {
+            return null;
+        }
         double t = alignZero(numerator / denominator);
         if (t > 0) {
             return List.of(ray.getPoint(t));

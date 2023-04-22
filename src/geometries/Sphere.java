@@ -33,21 +33,24 @@ public class Sphere extends RadialGeometry {
         if (center.equals(p0))
             return List.of(ray.getPoint(radius));
         Vector u = center.subtract(p0);
-        //if (u.length() < radius)הקרן בתוך הספרה
+        if (u.length() < radius) {//the ray is inside the sphere
+            double t = Math.sqrt((radius * radius - u.lengthSquared()));
+            alignZero(t);
+            return List.of(ray.getPoint(t));
+        }
         double tm = dir.dotProduct(u);
         if (tm == 0)//משיק לספרה
             return null;
         double d = Math.sqrt(u.lengthSquared() - (tm * tm));
         if (d >= radius) return null;
         double th = Math.sqrt(radius * radius - d * d);
-        double t1 = tm + th;
-        double t2 = tm - th;
-        alignZero(t1); alignZero(t2);
-        if (t1 < 0 && t2 < 0)
+        double t1 = alignZero(tm + th);
+        double t2 = alignZero(tm - th);
+        if (t1 <= 0 && t2 <= 0)
             return null;
-        if (t1 < 0 && t2 > 0)
+        if (t1 <= 0 && t2 > 0)
             return List.of(ray.getPoint(t2));
-        if (t1 > 0 && t2 < 0)
+        if (t1 > 0 && t2 <= 0)
             return List.of(ray.getPoint(t1));
         return List.of(ray.getPoint(t1), ray.getPoint(t2));
     }
