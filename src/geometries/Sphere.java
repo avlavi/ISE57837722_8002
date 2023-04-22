@@ -3,10 +3,9 @@ package geometries;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import primitives.Util;
+import java.util.List;
 
-import java.util.*;
-
-import static primitives.Util.alignZero;
 
 public class Sphere extends RadialGeometry {
     Point center;//center point of the sphere
@@ -26,26 +25,24 @@ public class Sphere extends RadialGeometry {
         return center;
     }
 
+
     @Override
     public List<Point> findIntersections(Ray ray) {
+
         Point p0 = ray.getP0();
         Vector dir = ray.getDir();
         if (center.equals(p0))
             return List.of(ray.getPoint(radius));
-        Vector u = center.subtract(p0);
-        if (u.length() < radius) {//the ray is inside the sphere
-            double t = Math.sqrt((radius * radius - u.lengthSquared()));
-            alignZero(t);
-            return List.of(ray.getPoint(t));
-        }
+        Vector u = this.center.subtract(p0);
+
         double tm = dir.dotProduct(u);
         if (tm == 0)//משיק לספרה
             return null;
-        double d = Math.sqrt(u.lengthSquared() - (tm * tm));
+        double d = Util.alignZero(Math.sqrt(u.lengthSquared() - (tm * tm)));
         if (d >= radius) return null;
-        double th = Math.sqrt(radius * radius - d * d);
-        double t1 = alignZero(tm + th);
-        double t2 = alignZero(tm - th);
+        double th = Math.sqrt((radius * radius) - (d * d));
+        double t1 = Util.alignZero(tm + th);
+        double t2 = Util.alignZero(tm - th);
         if (t1 <= 0 && t2 <= 0)
             return null;
         if (t1 <= 0 && t2 > 0)
