@@ -44,7 +44,7 @@ public class Plane implements Geometry {
         double denominator = normal.dotProduct(ray.getDir());
         double t = alignZero(numerator / denominator);
         if (t > 0) {
-            Point p1 = ray.getPoint(t);
+            return List.of(ray.getPoint(t));
         }
         return null;
     }
