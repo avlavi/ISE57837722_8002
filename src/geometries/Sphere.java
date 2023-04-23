@@ -34,10 +34,7 @@ public class Sphere extends RadialGeometry {
         if (center.equals(p0))
             return List.of(ray.getPoint(radius));
         Vector u = this.center.subtract(p0);
-
         double tm = dir.dotProduct(u);
-        if (tm == 0)//משיק לספרה
-            return null;
         double d = Util.alignZero(Math.sqrt(u.lengthSquared() - (tm * tm)));
         if (d >= radius) return null;
         double th = Math.sqrt((radius * radius) - (d * d));
