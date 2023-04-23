@@ -37,11 +37,23 @@ public class Plane implements Geometry {
         return normal;
     }
 
+    /**
+     * Computes the intersection point(s) between the current plane and a given ray.
+     *
+     * @param ray the ray to intersect with the plane
+     * @return a List<Point> containing the intersection point(s) if exists, otherwise null.
+     *
+     * @throws IllegalArgumentException if the ray is null
+     */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        if (ray.getP0().equals(this.q0)){
+    public List<Point> findIntersections(Ray ray) throws IllegalArgumentException {
+        if (ray == null) {//ray cannot be null
+            throw new IllegalArgumentException("Ray cannot be null");
+        }
+        if (ray.getP0().equals(this.q0)) {//start in the plane
             return null;
         }
+        //calculate according to the calculation in the course's book
         Vector rayToNormal = this.q0.subtract(ray.getP0());
         double numerator = this.normal.dotProduct(rayToNormal);
         double denominator = this.normal.dotProduct(ray.getDir());
@@ -53,5 +65,4 @@ public class Plane implements Geometry {
             return List.of(ray.getPoint(t));
         }
         return null;
-    }
-}
+    }}
