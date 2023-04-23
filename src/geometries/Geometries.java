@@ -31,19 +31,19 @@ public class Geometries implements Intersectable {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        boolean intersectionExist = false;
-        for (Intersectable element: this.geometries) {
+        boolean intersectExist = false;
+        for (Intersectable element: geometries) {
             if(element.findIntersections(ray) != null) {
-                intersectionExist = true;
+                intersectExist = true;
                 break;
             }
         }
-        if(intersectionExist == false) {
+        if(intersectExist == false) {
             return null;
         }
-        ArrayList<Point> IntersectionsPoints= new ArrayList<Point>();
 
-        for (Intersectable element: this.geometries) {
+        ArrayList<Point> IntersectionsPoints= new ArrayList<Point>();
+        for (Intersectable element: geometries) {
             if(element.findIntersections(ray) != null) {
                 IntersectionsPoints.addAll(element.findIntersections(ray));
             }
