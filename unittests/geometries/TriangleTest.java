@@ -53,11 +53,11 @@ class TriangleTest {
         // TC02: The point of intersection is outside the triangle opposite a side (0 points)
         result = triangle.findIntersections(new Ray(new Point(0,2,0),
                 new Vector(2,-1,1 )));
-        assertNull( result, "Wrong number of points");
+        assertNull( result, "Ray's line out of triangle");
         // TC03: The point of intersection is outside the triangle opposite a vertex (0 points)
         result = triangle.findIntersections(new Ray(new Point(0,2,1),
                 new Vector(0,1, 1)));
-        assertNull( result, "Wrong number of points");
+        assertNull( result, "Ray's line out of triangle");
 
         // =============== Boundary Values Tests ==================
         // TC11: The intersection point is on a side (0 points)

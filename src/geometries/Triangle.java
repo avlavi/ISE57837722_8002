@@ -10,12 +10,21 @@ public class Triangle extends Polygon{
     public Triangle(Point p1, Point p2,Point p3) {//con
         super(p1,p2,p3);
     }
+
+    /**
+
+     Computes the intersection point(s) between the current triangle and a given ray.
+     @param ray the ray to intersect with the triangle
+     @return a List<Point> containing the intersection point(s) if exists, otherwise null.
+     @throws IllegalArgumentException if the ray is null
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
 
-        if (super.plane.findIntersections(ray) == null) {
+        if (super.plane.findIntersections(ray) == null) {//at first find if thar is intersection with the plane of the triangle
             return null;
         }
+        //calculate according to the calculation in the course's book
         Point p = super.plane.findIntersections(ray).get(0);
         Vector v1 = this.vertices.get(0).subtract(ray.getP0());
         Vector v2 = this.vertices.get(1).subtract(ray.getP0());

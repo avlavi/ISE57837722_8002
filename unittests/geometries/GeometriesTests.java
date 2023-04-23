@@ -39,7 +39,7 @@ class GeometriesTests {
         result = geo1.findIntersections(new Ray(new Point(-8, 0, 0), new Vector(0, 0, 1)));
         assertNull(result, "dose not work when none of the shapes is intersected");
         // TC04: Just one shape is intersected
-        result = geo1.findIntersections(new Ray(new Point(1, 0,-3), new Vector(0, 0, 1)));
+        result = geo1.findIntersections(new Ray(new Point(1, 0, -3), new Vector(0, 0, 1)));
         assertEquals(2, result.size(), "dose not work when Just one shape is intersected");
         // TC05: All the shapes are intersected
         result = geo1.findIntersections(new Ray(new Point(-8, 0, 0), new Vector(1, 0, 0)));

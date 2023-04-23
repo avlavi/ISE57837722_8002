@@ -2,6 +2,7 @@ package geometries;
 
 import primitives.Point;
 import primitives.Ray;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class Geometries implements Intersectable {
 
     }
 
-    public void add(Intersectable... geometries){
+    public void add(Intersectable... geometries) {
         if (geometries != null) {
             this.geometries.addAll(List.of(geometries));
         }
@@ -32,22 +33,22 @@ public class Geometries implements Intersectable {
     @Override
     public List<Point> findIntersections(Ray ray) {
         boolean intersectExist = false;
-        for (Intersectable element: geometries) {
-            if(element.findIntersections(ray) != null) {
+        for (Intersectable element : geometries) {
+            if (element.findIntersections(ray) != null) {
                 intersectExist = true;
                 break;
             }
         }
-        if(intersectExist == false) {
+        if (intersectExist == false) {
             return null;
         }
 
-        ArrayList<Point> IntersectionsPoints= new ArrayList<Point>();
-        for (Intersectable element: geometries) {
-            if(element.findIntersections(ray) != null) {
+        ArrayList<Point> IntersectionsPoints = new ArrayList<Point>();
+        for (Intersectable element : geometries) {
+            if (element.findIntersections(ray) != null) {
                 IntersectionsPoints.addAll(element.findIntersections(ray));
             }
         }
-        return  List.of(IntersectionsPoints.toArray( new Point[0]));
+        return List.of(IntersectionsPoints.toArray(new Point[0]));
     }
 }
