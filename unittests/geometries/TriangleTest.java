@@ -40,6 +40,9 @@ class TriangleTest {
         // =============== Boundary Values Tests ==================
     }
 
+    /**
+     * Test method for {@link .geometries.Triangle#findIntersections(.geometries.Trinagle)}.
+     */
     @Test
     void testFindIntersections() {
         Triangle triangle = new Triangle( new Point(-1,0,1), new Point(1,0,1), new Point(0,2,1));

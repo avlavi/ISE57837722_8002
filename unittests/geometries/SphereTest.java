@@ -38,6 +38,9 @@ class SphereTest {
 
     }
 
+    /**
+     * Test method for {@link .geometries.Sphere#findIntersections(.geometries.Sphere)}.
+     */
     @Test
     public void testFindIntersections() {
         Sphere sphere = new Sphere(1, new Point(1, 0, 0));
