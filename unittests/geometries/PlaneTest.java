@@ -66,7 +66,7 @@ assertThrows(IllegalArgumentException.class, () -> new Plane(new Point(1, 0, 0),
         // ============ Equivalence Partitions Tests ==============
         //The Ray must be neither orthogonal nor parallel to the plane
         //TC01: Ray intersects the plane (1 point)
-        Point p1 = new Point(1, 0, 1);
+        Point p1 = new Point(0, 1, 1);
         List<Point> result = plane.findIntersections(new Ray(new Point(2, 0, 0), new Vector(-2, 1, 1)));
         assertEquals(1, result.size(), "Wrong number of points");
         assertEquals(List.of(p1), result, "Ray crosses plane");

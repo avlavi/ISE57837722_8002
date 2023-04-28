@@ -42,7 +42,6 @@ public class Plane implements Geometry {
      *
      * @param ray the ray to intersect with the plane
      * @return a List<Point> containing the intersection point(s) if exists, otherwise null.
-     *
      * @throws IllegalArgumentException if the ray is null
      */
     @Override
@@ -65,4 +64,5 @@ public class Plane implements Geometry {
             return List.of(ray.getPoint(t));
         }
         return null;
-    }}
+    }
+}

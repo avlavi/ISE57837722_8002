@@ -38,7 +38,7 @@ public class Triangle extends Polygon{
         if (a == 0 || b == 0 || c == 0) {
             return null;
         }
-        if ((a * b > 0 && b * c > 0) || (a * b < 0 && b * c < 0)) {
+        if (a * b > 0 && b * c > 0) {
             return List.of(p);
         }
         return null;
