@@ -12,7 +12,6 @@ public class Triangle extends Polygon{
     }
 
     /**
-
      Computes the intersection point(s) between the current triangle and a given ray.
      @param ray the ray to intersect with the triangle
      @return a List<Point> containing the intersection point(s) if exists, otherwise null.

@@ -47,7 +47,7 @@ class TriangleTest {
     void testFindIntersections() {
         Triangle triangle = new Triangle( new Point(-1,0,1), new Point(1,0,1), new Point(0,2,1));
         // ============ Equivalence Partitions Tests ==============
-        // TC01: The point of intersection inside the triangle (1 points)
+        // TC01: The point of intersection inside the triangle (1 point)
         Point p = new Point(0,1,1);
         List<Point> result = triangle.findIntersections(new Ray(new Point(0,2, 0),
                 new Vector(0,-1, 1)));
