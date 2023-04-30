@@ -30,10 +30,14 @@ public class IntegrationTests {
      */
     public int launcher(Intersectable geometric, Camera cam) {
         int sum = 0;
-        for (int i = 0; i < cam.width; i++)//
-            for (int j = 0; j < cam.height; j++) {//לבדוק במקרה של NULL אם הוא מ
-                if (geometric.findIntersections(cam.constructRay(3, 3, i, j)) != null)
-                    sum += geometric.findIntersections(cam.constructRay(3, 3, i, j)).size();
+        //list - temporarily keeps the intersection points
+        //useful when there are no intersection points, so we need to check if it's null
+        List<Point> list;
+        for (int i = 0; i < cam.width; i++)
+            for (int j = 0; j < cam.height; j++) {
+               list = geometric.findIntersections(cam.constructRay(3, 3, i, j));
+                if (list != null)
+                    sum += list.size();
             }
         return sum;
     }
