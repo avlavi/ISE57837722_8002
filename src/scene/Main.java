@@ -2,13 +2,9 @@
 Shilo Sofer 328308002 shilosouffir@gmail.com
 Aviad Lavi 215867722 2017aviad@gmail.com
  */
-package test;
+package scene;
 
 import static java.lang.System.out;
-import static primitives.Util.isZero;
-
-import primitives.Point;
-import primitives.Vector;
 
 /** Test program for the 1st stage
  * @author Dan Zilberstein */

@@ -116,15 +116,12 @@ public class Polygon implements Geometry {
         for (Point ver : vertices) {//calculate vectors from p0 to all the vertices of the polygon
             vectors.add(ver.subtract(p0));
         }
+
         for (int j = 0; j < vectors.size() - 1; j++) {//calculate normals
-            for (int k = j + 1; k < vectors.size(); k++) {
-                if (j == 0 && k == vectors.size() - 1) {//if it's the normal of the first vector and the last one
-                    normals.add(vectors.get(k).crossProduct(vectors.get(j)).normalize());
-                    break;
-                }
-                normals.add(vectors.get(j).crossProduct(vectors.get(k)).normalize());
-            }
+                normals.add(vectors.get(j).crossProduct(vectors.get(j+1)).normalize());
         }
+
+        normals.add(vectors.get(vectors.size()-1).crossProduct(vectors.get(0)).normalize());
         double[] numbers = new double[normals.size()];
         double a = dir.dotProduct(normals.get(0));
         double b = 0;
