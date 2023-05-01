@@ -3,6 +3,7 @@
  Represents a ray in a 3D space, defined by a starting point and a direction vector.
  */
 package primitives;
+import java.util.List;
 import java.util.Objects;
 
 public class Ray {
@@ -50,5 +51,16 @@ public class Ray {
 
     public Point getPoint(double t){
         return p0.add(dir.scale(t));
+    }
+    public Point findClosestPoint(List<Point> points){
+        if (points==null||points.size()==0)return null;
+        Point closestPoint=points.get(1);
+        double distance=closestPoint.distance(p0);
+        for (Point element:points) {
+            if(element.distance(p0)<distance){
+                closestPoint=element;
+                distance=element.distance(p0);}
+        }
+        return closestPoint;
     }
 }
