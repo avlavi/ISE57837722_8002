@@ -1,10 +1,9 @@
 package renderer;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
-
 
 
 /**
@@ -22,10 +21,11 @@ public class Camera {
     private Vector vTo;
     private Vector vUp;
     private Vector vRight;
-
-    double width;
-    double height;
-    double distance;
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracerBase;
+    double width = 0;
+    double height = 0;
+    double distance = 0;
 
     /**
      * Constructs a new camera with the specified location, direction, and up vector.
@@ -69,6 +69,56 @@ public class Camera {
         return this;
     }
 
+    public Camera setImageWriter(ImageWriter imageWriter) {
+        this.imageWriter = imageWriter;
+        return this;
+    }
+
+    public Camera setRayTracerBase(RayTracerBase rayTracerBase) {
+        this.rayTracerBase = rayTracerBase;
+        return this;
+    }
+
+    public void renderImage() {
+        if (this.rayTracerBase == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
+            throw new UnsupportedOperationException("MissingResourcesException");
+
+    }
+
+    public void printGrid(int interval, Color color) {
+        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
+        for (int i = 0; i < imageWriter.getNy(); i++)
+            if (i % interval == 0) {
+                for (int j = 0; j < imageWriter.getNx(); j++) {
+                    imageWriter.writePixel(j, i, color);
+                }
+            } else for (int j = 0; j < imageWriter.getNx(); j += interval) {
+                imageWriter.writePixel(j, i, color);
+            }
+        imageWriter.writeToImage();
+    }
+
+    private Color castRay(int nX, int nY, int j, int i) {
+        return this.rayTracerBase.traceRay(this.constructRay(nX, nY, j, i));
+    }
+
+    ;
+
+    public void writeToImage() {
+        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                if (i == 301 && j == 300) {
+                    int a = 2;
+                }
+                imageWriter.writePixel(j, i, this.castRay(nX, nY, j, i));
+            }
+        }
+        imageWriter.writeToImage();
+    }
+
     /**
      * Constructs a ray from the camera to a specific point in the view plane.
      *
@@ -90,4 +140,5 @@ public class Camera {
         Vector Vij = Pij.subtract(this.location);
         return new Ray(this.location, Vij);
     }
+
 }
