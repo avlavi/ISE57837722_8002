@@ -5,9 +5,22 @@ import primitives.Color;
 import primitives.Double3;
 
 public class AmbientLight {
-    private Color lA;
+    private Color IA;
     private Color intensity;
     private Double3 kA;
-    AmbientLight ambientLight; //= AmbientLight.NONE;
-    Geometries geometries = new Geometries();
+    public static final AmbientLight NONE =  new AmbientLight(Color.BLACK,Double3.ZERO);
+    public AmbientLight(Color IA, Double3 kA) {
+        this.IA = IA;
+        this.kA=kA;
+        this.intensity=IA.scale(kA);
+    }
+    public AmbientLight(Color IA, double kA) {
+        this.IA = IA;
+        this.kA=new Double3(kA);
+        this.intensity=IA.scale(kA);
+    }
+
+    public Color getIntensity() {
+        return intensity;
+    }
 }

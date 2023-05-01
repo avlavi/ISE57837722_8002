@@ -1,23 +1,36 @@
 package scene;
 
+import geometries.Geometries;
 import lighting.AmbientLight;
 import primitives.Color;
 
 import java.awt.*;
 
 public class Scene {
-    String name;
-    Color background;
+    public String name;
+    public Color background;
+    public AmbientLight ambientLight;
+    public Geometries geometries;
 
     public Scene(String name) {
         this.name = name;
+        this.background = Color.BLACK;
+        this.ambientLight = AmbientLight.NONE;
+        this.geometries = new Geometries();
     }
 
-    public Scene(String name, Color background) {
-        this.name = name;
+    public Scene setBackground(Color background) {
         this.background = background;
+        return this;
     }
 
-    public void setAmbientLight(AmbientLight ambientLight) {
+    public Scene setAmbientLight(AmbientLight ambientLight) {
+        this.ambientLight = ambientLight;
+        return this;
+    }
+
+    public Scene setGeometries(Geometries geometries) {
+        this.geometries = geometries;
+        return this;
     }
 }
