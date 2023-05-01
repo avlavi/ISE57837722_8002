@@ -45,7 +45,7 @@ public class Plane implements Geometry {
      * @throws IllegalArgumentException if the ray is null
      */
     @Override
-    public List<Point> findIntersections(Ray ray) throws IllegalArgumentException {
+    public List<Point> findIntersections(Ray ray) {
         if (ray == null) {//ray cannot be null
             throw new IllegalArgumentException("Ray cannot be null");
         }
