@@ -110,7 +110,7 @@ public class Camera {
         int nY = imageWriter.getNy();
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                if (i == 301 && j == 300) {
+                if (i == 300 && j == 300) {
                     int a = 2;
                 }
                 imageWriter.writePixel(j, i, this.castRay(nX, nY, j, i));

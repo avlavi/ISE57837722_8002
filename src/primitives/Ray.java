@@ -57,7 +57,7 @@ public class Ray {
 
     public Point findClosestPoint(List<Point> points) {
         if (points == null || points.size() == 0) return null;
-        Point closestPoint = points.get(1);
+        Point closestPoint = points.get(0);
         double distance = closestPoint.distance(p0);
         for (Point element : points) {
             if (element.distance(p0) < distance) {
