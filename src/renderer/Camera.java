@@ -47,10 +47,6 @@ public class Camera {
 
     /**
      * Sets the width and height of the view plane.
-     *
-     * @param width  the width of the viewport
-     * @param height the height of the viewport
-     * @return this Camera object
      */
     public Camera setVPSize(double width, double height) {
         this.width = width;
@@ -60,9 +56,6 @@ public class Camera {
 
     /**
      * Sets the distance between the camera and the view plane.
-     *
-     * @param distance the distance between the camera and the viewport
-     * @return this Camera object
      */
     public Camera setVPDistance(double distance) {
         this.distance = distance;
@@ -77,46 +70,6 @@ public class Camera {
     public Camera setRayTracerBase(RayTracerBase rayTracerBase) {
         this.rayTracerBase = rayTracerBase;
         return this;
-    }
-
-    public void renderImage() {
-        if (this.rayTracerBase == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
-            throw new UnsupportedOperationException("MissingResourcesException");
-
-    }
-
-    public void printGrid(int interval, Color color) {
-        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
-        for (int i = 0; i < imageWriter.getNy(); i++)
-            if (i % interval == 0) {
-                for (int j = 0; j < imageWriter.getNx(); j++) {
-                    imageWriter.writePixel(j, i, color);
-                }
-            } else for (int j = 0; j < imageWriter.getNx(); j += interval) {
-                imageWriter.writePixel(j, i, color);
-            }
-        imageWriter.writeToImage();
-    }
-
-    private Color castRay(int nX, int nY, int j, int i) {
-        return this.rayTracerBase.traceRay(this.constructRay(nX, nY, j, i));
-    }
-
-    ;
-
-    public void writeToImage() {
-        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
-        int nX = imageWriter.getNx();
-        int nY = imageWriter.getNy();
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                if (i == 300 && j == 300) {
-                    int a = 2;
-                }
-                imageWriter.writePixel(j, i, this.castRay(nX, nY, j, i));
-            }
-        }
-        imageWriter.writeToImage();
     }
 
     /**
@@ -141,4 +94,51 @@ public class Camera {
         return new Ray(this.location, Vij);
     }
 
+    private Color castRay(int nX, int nY, int j, int i) {
+        return this.rayTracerBase.traceRay(this.constructRay(nX, nY, j, i));
+    }
+
+    /**
+     * Renders the image by casting rays from the camera through each pixel of the image and writing the resulting color to the imageWriter.
+     * Throws UnsupportedOperationException if any of the required resources are missing (rayTracerBase, imageWriter, width, height, distance).
+     */
+    public void renderImage() {
+        if (this.rayTracerBase == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
+            throw new UnsupportedOperationException("MissingResourcesException");
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                imageWriter.writePixel(j, i, this.castRay(nX, nY, j, i));
+            }
+        }
+    }
+
+    /**
+     * Draws a grid on the image by writing a specified color to the pixels that fall on the grid lines.
+     * Throws UnsupportedOperationException if imageWriter object is null.
+     *
+     * @param interval The spacing between grid lines.
+     * @param color The color to use for the grid lines.
+     */
+    public void printGrid(int interval, Color color) {
+        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
+        for (int i = 0; i < imageWriter.getNy(); i++)
+            if (i % interval == 0) {
+                for (int j = 0; j < imageWriter.getNx(); j++) {
+                    imageWriter.writePixel(j, i, color);
+                }
+            } else for (int j = 0; j < imageWriter.getNx(); j += interval) {
+                imageWriter.writePixel(j, i, color);
+            }
+    }
+
+    /**
+     * Writes the rendered image to the output file using the imageWriter object.
+     * Throws UnsupportedOperationException if imageWriter object is null.
+     */
+    public void writeToImage() {
+        if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
+        this.imageWriter.writeToImage();
+    }
 }

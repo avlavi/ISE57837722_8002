@@ -55,6 +55,13 @@ public class Ray {
         return p0.add(dir.scale(t));
     }
 
+    /**
+     * Finds the point in the given list that is closest to the starting point of the ray.
+     *
+     * @param points the list of points to search for the closest point
+     * @return the point in the list that is closest to the reference point, or null if the input list is empty
+     * @throws NullPointerException if the input list is null
+     */
     public Point findClosestPoint(List<Point> points) {
         if (points == null || points.size() == 0) return null;
         Point closestPoint = points.get(0);

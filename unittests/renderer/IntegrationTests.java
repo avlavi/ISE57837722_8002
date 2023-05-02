@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 public class IntegrationTests {
+    private double nX;
+
     /**
      * Calculates the number of intersections between the given geometric object and rays constructed by the camera for each pixel in its view.
      *
@@ -28,14 +30,14 @@ public class IntegrationTests {
      * @param cam       the Camera object used to construct the rays
      * @return the total number of intersections found
      */
-    public int launcher(Intersectable geometric, Camera cam) {
+    public int launcher(Intersectable geometric, Camera cam, int nX, int nY) {
         int sum = 0;
         //list - temporarily keeps the intersection points
         //useful when there are no intersection points, so we need to check if it's null
         List<Point> list;
-        for (int i = 0; i < cam.width; i++)
-            for (int j = 0; j < cam.height; j++) {
-               list = geometric.findIntersections(cam.constructRay(3, 3, i, j));
+        for (int i = 0; i < nY; i++)
+            for (int j = 0; j < nX; j++) {
+                list = geometric.findIntersections(cam.constructRay(nX, nY, i, j));
                 if (list != null)
                     sum += list.size();
             }
@@ -50,13 +52,15 @@ public class IntegrationTests {
         String wrongNumber = "wrong number of points";
         Vector vTo = new Vector(0, 0, -1);
         Vector vUp = new Vector(0, 1, 0);
+        int nX = 3;
+        int nY = 3;
 
         // TC01: Sphere r = 1
         Camera cam1 = new Camera(new Point(0, 0, 0), vTo, vUp);
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(2,
-                launcher(new Sphere(1, new Point(0, 0, -3)), cam1),
+                launcher(new Sphere(1, new Point(0, 0, -3)), cam1, nX, nY),
                 wrongNumber);
 
         // TC02: Sphere r = 2.5
@@ -64,7 +68,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(18,
-                launcher(new Sphere(2.5, new Point(0, 0, -2.5)), cam2),
+                launcher(new Sphere(2.5, new Point(0, 0, -2.5)), cam2, nX, nY),
                 wrongNumber);
 
         // TC03: Sphere r = 2
@@ -72,7 +76,7 @@ public class IntegrationTests {
         cam3.setVPSize(3, 3);
         cam3.setVPDistance(1);
         assertEquals(10,
-                launcher(new Sphere(2, new Point(0, 0, -2)), cam3),
+                launcher(new Sphere(2, new Point(0, 0, -2)), cam3, nX, nY),
                 wrongNumber);
 
         // TC04: Sphere r = 4
@@ -80,7 +84,7 @@ public class IntegrationTests {
         cam4.setVPSize(3, 3);
         cam4.setVPDistance(1);
         assertEquals(9,
-                launcher(new Sphere(4, new Point(0, 0, -0.5)), cam4),
+                launcher(new Sphere(4, new Point(0, 0, -0.5)), cam4, nX, nY),
                 wrongNumber);
 
         // TC05: Sphere r = 0.5
@@ -88,7 +92,7 @@ public class IntegrationTests {
         cam5.setVPSize(3, 3);
         cam5.setVPDistance(1);
         assertEquals(0,
-                launcher(new Sphere(0.5, new Point(0, 0, 1)), cam5),
+                launcher(new Sphere(0.5, new Point(0, 0, 1)), cam5, nX, nY),
                 wrongNumber);
 
     }
@@ -101,13 +105,15 @@ public class IntegrationTests {
         String wrongNumber = "wrong number of points";
         Vector vTo = new Vector(0, 0, -1);
         Vector vUp = new Vector(0, 1, 0);
+        int nX = 3;
+        int nY = 3;
 
         // TC01: Plane is parallel to the view plane
         Camera cam1 = new Camera(new Point(0, 0, 0.5), vTo, vUp);
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(9,
-                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 0, 1)), cam1),
+                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 0, 1)), cam1, nX, nY),
                 wrongNumber);
 
         // TC02: Plane is not parallel to the view plane (intersected in 9 points)
@@ -115,7 +121,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(9,
-                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 1, -5)), cam2),
+                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 1, -5)), cam2, nX, nY),
                 wrongNumber);
 
         // TC03: Plane is not parallel to the view plane (intersected in 6 points)
@@ -123,7 +129,7 @@ public class IntegrationTests {
         cam3.setVPSize(3, 3);
         cam3.setVPDistance(1);
         assertEquals(6,
-                launcher(new Plane(new Point(0, 0, -5), new Vector(0, 6, -5)), cam3),
+                launcher(new Plane(new Point(0, 0, -5), new Vector(0, 6, -5)), cam3, nX, nY),
                 wrongNumber);
     }
 
@@ -135,13 +141,15 @@ public class IntegrationTests {
         String wrongNumber = "wrong number of points";
         Vector vTo = new Vector(0, 0, -1);
         Vector vUp = new Vector(0, 1, 0);
+        int nX = 3;
+        int nY = 3;
 
         // TC01: Triangle is parallel to the view plane and the size  of one pixel
         Camera cam1 = new Camera(new Point(0, 0, 0.5), vTo, vUp);
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(1,
-                launcher(new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1 , -1, -2)), cam1),
+                launcher(new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), cam1, nX, nY),
                 wrongNumber);
 
         // TC02: Plane is parallel to the view plane (intersected in 2 points)
@@ -149,7 +157,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(2,
-                launcher(new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), cam2),
+                launcher(new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), cam2, nX, nY),
                 wrongNumber);
     }
 }
