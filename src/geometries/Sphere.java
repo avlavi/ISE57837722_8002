@@ -35,14 +35,14 @@ public class Sphere extends RadialGeometry {
      * @throws IllegalArgumentException if the ray is null
      */
     @Override
-    public List<Point> findIntersections(Ray ray) throws IllegalArgumentException {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) throws IllegalArgumentException {
         if (ray == null) {
             throw new IllegalArgumentException("Ray cannot be null");
         }
         Point p0 = ray.getP0();
         Vector dir = ray.getDir();
         if (center.equals(p0)) {//ray stars at the center
-            return List.of(ray.getPoint(radius));
+            return List.of(new GeoPoint(this,ray.getPoint(radius)));
         }
         Vector u = this.center.subtract(p0);
         double tm = dir.dotProduct(u);
@@ -57,11 +57,11 @@ public class Sphere extends RadialGeometry {
             return null;
         }
         if (t1 <= 0 && t2 > 0) {
-            return List.of(ray.getPoint(t2));
+            return List.of(new GeoPoint(this,ray.getPoint(t2)));
         }
         if (t1 > 0 && t2 <= 0) {
-            return List.of(ray.getPoint(t1));
+            return List.of(new GeoPoint(this,ray.getPoint(t1)));
         }
-        return List.of(ray.getPoint(t1), ray.getPoint(t2));
+        return List.of(new GeoPoint(this,ray.getPoint(t1)),new GeoPoint(this,ray.getPoint(t2)));
     }
 }

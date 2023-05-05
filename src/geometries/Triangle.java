@@ -18,7 +18,7 @@ public class Triangle extends Polygon{
      @throws IllegalArgumentException if the ray is null
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
 
         if (super.plane.findIntersections(ray) == null) {//at first find if thar is intersection with the plane of the triangle
             return null;
@@ -38,7 +38,7 @@ public class Triangle extends Polygon{
             return null;
         }
         if (a * b > 0 && b * c > 0) {
-            return List.of(p);
+            return List.of(new GeoPoint(this,p));
         }
         return null;
     }

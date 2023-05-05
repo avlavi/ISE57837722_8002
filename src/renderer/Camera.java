@@ -5,6 +5,9 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import static java.awt.Color.RED;
+import static java.awt.Color.YELLOW;
+
 
 /**
  * Camera class represents a camera in a 3D scene. It defines the camera's location,

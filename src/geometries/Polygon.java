@@ -16,7 +16,7 @@ import primitives.Vector;
  *
  * @author Dan
  */
-public class Polygon implements Geometry {
+public class Polygon extends Geometry {
     /**
      * List of polygon's vertices
      */
@@ -101,7 +101,7 @@ public class Polygon implements Geometry {
      @throws IllegalArgumentException if the ray is null
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
 
         if (plane.findIntersections(ray) == null) {//at first find if thar is intersection with the plane of the triangle
             return null;
@@ -130,6 +130,6 @@ public class Polygon implements Geometry {
             if (a * b <= 0)
                 return null;
         }
-        return List.of(p);
+        return List.of(new GeoPoint(this,p));
     }
 }
