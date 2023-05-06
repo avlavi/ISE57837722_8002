@@ -6,7 +6,12 @@ import primitives.Vector;
 
 public class PointLight extends Light implements LightSource {
     private Point position;
-    private double kC = 0, kL = 0, kQ = 0;
+    private double kC = 1, kL = 0, kQ = 0;
+
+    public PointLight(Color intensity, Point position) {
+        super(intensity);
+        this.position = position;
+    }
 
     public PointLight setkC(double kC) {
         this.kC = kC;
@@ -19,25 +24,19 @@ public class PointLight extends Light implements LightSource {
 
     }
 
-
     public PointLight setkQ(double kQ) {
         this.kQ = kQ;
         return this;
     }
 
-    public PointLight(Color intensity, Point position) {
-        super(intensity);
-        this.position = position;
-    }
 
     @Override
     public Color getIntensity(Point p) {
         double distance = position.distance(p);
-        double denominator = 1.0 / (this.kC +
+        double denominator = (1.0 / (this.kC +
                 this.kL * distance +
-                this.kQ * distance * distance);
-        Color IL = this.getIntensity().scale(denominator);
-        return IL;
+                this.kQ * distance * distance));
+        return this.getIntensity().scale(denominator);
     }
 
     @Override
