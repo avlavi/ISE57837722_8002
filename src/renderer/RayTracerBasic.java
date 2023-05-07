@@ -41,6 +41,15 @@ public class RayTracerBasic extends RayTracerBase {
         return this.scene.ambientLight.getIntensity().add(calcLocalEffects(point, ray));
     }
 
+    /**
+     * Calculates the local effects of the given geometry point and ray, taking into account
+     * the emission of the geometry, the direction of the ray, the normal of the geometry, and
+     * the scene's lights. Returns the resulting color.
+     *
+     * @param gp  The geometry point to calculate the local effects for.
+     * @param ray The ray to calculate the local effects for.
+     * @return The resulting color after calculating the local effects.
+     */
     private Color calcLocalEffects(GeoPoint gp, Ray ray) {
         Color color = gp.geometry.getEmission();
         Vector v = ray.getDir();
@@ -60,10 +69,28 @@ public class RayTracerBasic extends RayTracerBase {
         return color;
     }
 
+    /**
+     * Calculates the diffuse reflection of the given material and normal-lights angle.
+     *
+     * @param material The material to calculate the diffuse reflection for.
+     * @param nl       The normal-lights angle to calculate the diffuse reflection for.
+     * @return The calculated diffuse reflection.
+     */
     private Double3 calcDiffusive(Material material, double nl) {
         return material.kD.scale(Math.abs(nl));
     }
 
+    /**
+     * Calculates the specular reflection of the given material, normal, light, normal-lights angle,
+     * and viewer direction.
+     *
+     * @param material The material to calculate the specular reflection for.
+     * @param n        The normal of the geometry point.
+     * @param l        The direction of the light.
+     * @param nl       The normal-lights angle.
+     * @param v        The viewer direction.
+     * @return The calculated specular reflection.
+     */
     private Double3 calcSpecular(Material material, Vector n, Vector l, double nl, Vector v) {
         Vector r = l.subtract(n.scale(l.dotProduct(n)).scale(2)).normalize();
         return material.kS.scale(Math.pow(Math.max(0, v.dotProduct(r) * (-1)), material.nShininess));

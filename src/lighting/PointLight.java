@@ -8,6 +8,12 @@ public class PointLight extends Light implements LightSource {
     private Point position;
     private double kC = 1, kL = 0, kQ = 0;
 
+    /**
+     * Creates a new PointLight object with the specified intensity and position.
+     *
+     * @param intensity The intensity of the point light.
+     * @param position  The position of the point light.
+     */
     public PointLight(Color intensity, Point position) {
         super(intensity);
         this.position = position;

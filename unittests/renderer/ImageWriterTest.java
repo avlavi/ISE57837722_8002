@@ -21,26 +21,16 @@ class ImageWriterTest {
     void testWriteToImage() {
         // ============ Equivalence Partitions Tests ==============
         ImageWriter imageWriter = new ImageWriter("test", 800, 500);//create a file for the image
-        for (int i = 0; i < 500; ) {//Goes over the image from top to bottom. rows
-            for (int j = 0; j < 800; j++) {//Draws a red line
-                imageWriter.writePixel(j, i, new Color(255, 0, 0));
-            }
-            i++;
-            ///////Paint a line of yellow squares
-            for (int h = 0; h < 49; h++, i++) {
-                for (int j = 0; j < 800; j += 50) {//column of red
+        for (int i = 0; i < 500; i++) {
+            for (int j = 0; j < 800; j++) {
+                if (i % 50 == 0 || j % 50 == 0)
                     imageWriter.writePixel(j, i, new Color(255, 0, 0));
-                    for (int k = 1; k < 50; k++) {//column of yellow
-                        imageWriter.writePixel(k + j, i, new Color(255, 255, 0));
-                    }
-                }
+                else
+                    imageWriter.writePixel(j, i, new Color(255, 255, 0));
 
             }
-            ///////
         }
         imageWriter.writeToImage();
 
     }
-    // =============== Boundary Values Tests ==================
-
 }
