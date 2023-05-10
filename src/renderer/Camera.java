@@ -122,16 +122,19 @@ public class Camera {
      * Throws UnsupportedOperationException if imageWriter object is null.
      *
      * @param interval The spacing between grid lines.
-     * @param color The color to use for the grid lines.
+     * @param color    The color to use for the grid lines.
      */
     public void printGrid(int interval, Color color) {
         if (imageWriter == null) throw new UnsupportedOperationException("MissingResourcesException");
-        for (int i = 0; i < imageWriter.getNy(); i++)
-            if (i % interval == 0) {
-                for (int j = 0; j < imageWriter.getNx(); j++) {
-                    imageWriter.writePixel(j, i, color);
-                }
-            } else for (int j = 0; j < imageWriter.getNx(); j += interval) {
+        int nx = imageWriter.getNx();
+        int ny = imageWriter.getNy();
+
+        for (int i = 0; i < ny; i += interval)
+            for (int j = 0; j < nx; j++) {
+                imageWriter.writePixel(j, i, color);
+            }
+        for (int j = 0; j < nx; j += interval)
+            for (int i = 0; i < ny; i++) {
                 imageWriter.writePixel(j, i, color);
             }
     }

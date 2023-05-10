@@ -1,11 +1,9 @@
 package renderer;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
-
 import primitives.*;
-import renderer.Camera;
+import scene.Scene;
 
 /**
  * Testing Camera Class
@@ -56,5 +54,10 @@ class CameraTest {
                 camera.setVPSize(8, 8).constructRay(4, 4, 1, 0), badRay);
 
     }
-
+ /*   @Test
+    void testConvertor(){
+        Scene sen = new Scene("aaa");
+        assertEquals(new Double3(10, 11, 12), sen.doubl3Convert("10 11 12"), "wrong");
+    }
+  */
 }

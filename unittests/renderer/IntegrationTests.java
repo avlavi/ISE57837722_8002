@@ -26,11 +26,11 @@ public class IntegrationTests {
     /**
      * Calculates the number of intersections between the given geometric object and rays constructed by the camera for each pixel in its view.
      *
-     * @param geometric an object implementing the Intersectable interface to test for intersections with the rays
      * @param cam       the Camera object used to construct the rays
+     * @param geometric an object implementing the Intersectable interface to test for intersections with the rays
      * @return the total number of intersections found
      */
-    public int launcher(Intersectable geometric, Camera cam, int nX, int nY) {
+    public int launcher(Camera cam, Intersectable geometric, int nX, int nY) {
         int sum = 0;
         //list - temporarily keeps the intersection points
         //useful when there are no intersection points, so we need to check if it's null
@@ -60,7 +60,7 @@ public class IntegrationTests {
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(2,
-                launcher(new Sphere(1, new Point(0, 0, -3)), cam1, nX, nY),
+                launcher(cam1, new Sphere(1, new Point(0, 0, -3)), nX, nY),
                 wrongNumber);
 
         // TC02: Sphere r = 2.5
@@ -68,7 +68,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(18,
-                launcher(new Sphere(2.5, new Point(0, 0, -2.5)), cam2, nX, nY),
+                launcher(cam2, new Sphere(2.5, new Point(0, 0, -2.5)), nX, nY),
                 wrongNumber);
 
         // TC03: Sphere r = 2
@@ -76,7 +76,7 @@ public class IntegrationTests {
         cam3.setVPSize(3, 3);
         cam3.setVPDistance(1);
         assertEquals(10,
-                launcher(new Sphere(2, new Point(0, 0, -2)), cam3, nX, nY),
+                launcher(cam3, new Sphere(2, new Point(0, 0, -2)), nX, nY),
                 wrongNumber);
 
         // TC04: Sphere r = 4
@@ -84,7 +84,7 @@ public class IntegrationTests {
         cam4.setVPSize(3, 3);
         cam4.setVPDistance(1);
         assertEquals(9,
-                launcher(new Sphere(4, new Point(0, 0, -0.5)), cam4, nX, nY),
+                launcher(cam4, new Sphere(4, new Point(0, 0, -0.5)), nX, nY),
                 wrongNumber);
 
         // TC05: Sphere r = 0.5
@@ -92,7 +92,7 @@ public class IntegrationTests {
         cam5.setVPSize(3, 3);
         cam5.setVPDistance(1);
         assertEquals(0,
-                launcher(new Sphere(0.5, new Point(0, 0, 1)), cam5, nX, nY),
+                launcher(cam5, new Sphere(0.5, new Point(0, 0, 1)), nX, nY),
                 wrongNumber);
 
     }
@@ -113,7 +113,7 @@ public class IntegrationTests {
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(9,
-                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 0, 1)), cam1, nX, nY),
+                launcher(cam1, new Plane(new Point(1, 1, -5), new Vector(0, 0, 1)), nX, nY),
                 wrongNumber);
 
         // TC02: Plane is not parallel to the view plane (intersected in 9 points)
@@ -121,7 +121,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(9,
-                launcher(new Plane(new Point(1, 1, -5), new Vector(0, 1, -5)), cam2, nX, nY),
+                launcher(cam2, new Plane(new Point(1, 1, -5), new Vector(0, 1, -5)), nX, nY),
                 wrongNumber);
 
         // TC03: Plane is not parallel to the view plane (intersected in 6 points)
@@ -129,7 +129,7 @@ public class IntegrationTests {
         cam3.setVPSize(3, 3);
         cam3.setVPDistance(1);
         assertEquals(6,
-                launcher(new Plane(new Point(0, 0, -5), new Vector(0, 6, -5)), cam3, nX, nY),
+                launcher(cam3, new Plane(new Point(0, 0, -5), new Vector(0, 6, -5)), nX, nY),
                 wrongNumber);
     }
 
@@ -149,7 +149,7 @@ public class IntegrationTests {
         cam1.setVPSize(3, 3);
         cam1.setVPDistance(1);
         assertEquals(1,
-                launcher(new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), cam1, nX, nY),
+                launcher(cam1, new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), nX, nY),
                 wrongNumber);
 
         // TC02: Plane is parallel to the view plane (intersected in 2 points)
@@ -157,7 +157,7 @@ public class IntegrationTests {
         cam2.setVPSize(3, 3);
         cam2.setVPDistance(1);
         assertEquals(2,
-                launcher(new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), cam2, nX, nY),
+                launcher(cam2, new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)), nX, nY),
                 wrongNumber);
     }
 }

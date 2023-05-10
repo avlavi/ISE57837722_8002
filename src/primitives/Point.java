@@ -25,7 +25,7 @@ public class Point {
      * @param p1 the coordinate object
      * @throws NullPointerException if the coordinate object is null
      */
-    Point(Double3 p1) {
+    public Point(Double3 p1) {
         this.xyz = new Double3(p1.d1, p1.d2, p1.d3);
     }
 
