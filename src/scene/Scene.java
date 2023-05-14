@@ -91,33 +91,33 @@ public class Scene {
      * @return the Geometries inside the Geometries Element
      */
     private Geometries GeometriesFromXmlElement(Element geometriesElement) {
-        NodeList geoList = geometriesElement.getChildNodes();
+        NodeList geometrie = geometriesElement.getChildNodes();
         Geometries geometries = new Geometries();
-        int length = geoList.getLength();
+        int length = geometrie.getLength();
         Element IElement;
         Intersectable intersectable;
         for (int i = 0; i < length; ++i) {
-            if (geoList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                IElement = (Element) geoList.item(i);
+            if (geometrie.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                IElement = (Element) geometrie.item(i);
                 switch (IElement.getTagName()) {
                     case "cylinder":
                         intersectable = new Cylinder(
                                 parseDouble(IElement.getAttribute("radius")),
-                                new Ray(new Point(doubl3Convert(IElement.getAttribute("p0"))),
-                                        new Vector(doubl3Convert(IElement.getAttribute("direction")))),
+                                new Ray(new Point(Double3.parseDouble3(IElement.getAttribute("p0"))),
+                                        new Vector(Double3.parseDouble3(IElement.getAttribute("direction")))),
                                 parseDouble(IElement.getAttribute("height")));
                         break;
                     case "plane":
                         if (IElement.hasAttribute("normal")) {
                             intersectable = new Plane(
-                                    new Point(doubl3Convert(IElement.getAttribute("p0"))),
-                                    new Vector(doubl3Convert(IElement.getAttribute("normal")))
+                                    new Point(Double3.parseDouble3(IElement.getAttribute("p0"))),
+                                    new Vector(Double3.parseDouble3(IElement.getAttribute("normal")))
                             );
                         } else {
                             intersectable = new Plane(
-                                    new Point(doubl3Convert(IElement.getAttribute("p0"))),
-                                    new Point(doubl3Convert(IElement.getAttribute("p1"))),
-                                    new Point(doubl3Convert(IElement.getAttribute("p2")))
+                                    new Point(Double3.parseDouble3(IElement.getAttribute("p0"))),
+                                    new Point(Double3.parseDouble3(IElement.getAttribute("p1"))),
+                                    new Point(Double3.parseDouble3(IElement.getAttribute("p2")))
                             );
                         }
                         break;
@@ -126,21 +126,21 @@ public class Scene {
                         ArrayList<Point> points = new ArrayList<>();
 
                         for (int j = 0; j < ver.length; j++) {
-                            points.add(new Point(doubl3Convert(ver[j])));
+                            points.add(new Point(Double3.parseDouble3(ver[j])));
                         }
                         intersectable = new Polygon(points.toArray(new Point[points.size()]));
                       break;
                     case "sphere":
                         intersectable = new Sphere(
                                 parseDouble(IElement.getAttribute("radius")),
-                                new Point(doubl3Convert(IElement.getAttribute("center")))
+                                new Point(Double3.parseDouble3(IElement.getAttribute("center")))
                         );
                         break;
                     case "triangle":
                         intersectable = new Triangle(
-                                new Point(doubl3Convert(IElement.getAttribute("p0"))),
-                                new Point(doubl3Convert(IElement.getAttribute("p1"))),
-                                new Point(doubl3Convert(IElement.getAttribute("p2")))
+                                new Point(Double3.parseDouble3(IElement.getAttribute("p0"))),
+                                new Point(Double3.parseDouble3(IElement.getAttribute("p1"))),
+                                new Point(Double3.parseDouble3(IElement.getAttribute("p2")))
                         );
                         break;
 
@@ -148,8 +148,8 @@ public class Scene {
                     case "tube":
                         intersectable = new Tube(
                                 parseDouble(IElement.getAttribute("radius")),
-                                new Ray(new Point(doubl3Convert(IElement.getAttribute("point"))),
-                                        new Vector(doubl3Convert(IElement.getAttribute("vector"))))
+                                new Ray(new Point(Double3.parseDouble3(IElement.getAttribute("point"))),
+                                        new Vector(Double3.parseDouble3(IElement.getAttribute("vector"))))
                         );
                         break;
 
@@ -176,10 +176,10 @@ public class Scene {
             Element sceneElement = (Element) document.getElementsByTagName("scene").item(0);
             Element tagName = (Element) sceneElement.getElementsByTagName("ambient-light").item(0);
 
-            this.background = new Color(doubl3Convert(sceneElement.getAttribute("background-color")));
+            this.background = new Color(Double3.parseDouble3(sceneElement.getAttribute("background-color")));
             this.ambientLight = new AmbientLight(
-                    new Color(doubl3Convert(tagName.getAttribute("color"))),
-                    doubl3Convert(tagName.getAttribute("Ka")));
+                    new Color(Double3.parseDouble3(tagName.getAttribute("color"))),
+                    Double3.parseDouble3(tagName.getAttribute("Ka")));
 
             tagName = (Element) sceneElement.getElementsByTagName("geometries").item(0);
             if (tagName.getChildNodes().getLength() == 0)//if there are no geometries in the scene
@@ -191,12 +191,5 @@ public class Scene {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private Double3 doubl3Convert(String str) {
-        Scanner stringScanner = new Scanner(str);
-        return new Double3(parseDouble(stringScanner.next()),
-                parseDouble(stringScanner.next()),
-                parseDouble(stringScanner.next()));
     }
 }

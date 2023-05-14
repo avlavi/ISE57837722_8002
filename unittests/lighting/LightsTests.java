@@ -113,6 +113,28 @@ public class LightsTests {
     }
 
     /**
+     *  Produce a picture of sphere lighted by all three light sources
+     */
+    @Test
+    public void sphereMultiLightSources() {
+        scene1.geometries.add(sphere);
+        Color sphereLightColor1 = new Color(255, 130, 95);
+        Point sphereLightPosition1 = new Point(-60, -60, 25);
+
+        scene1.lights.add(new DirectionalLight(sphereLightColor1, new Vector(-56, 10, -0.5)));
+        scene1.lights.add(new PointLight(sphereLightColor1, sphereLightPosition1)
+                .setkL(0.001).setkQ(0.0002));
+        scene1.lights.add(new SpotLight(sphereLightColor1, sphereLightPosition1,
+                new Vector(1, 1, -0.5))
+                .setkL(0.001).setkQ(0.0001));
+
+        ImageWriter imageWriter = new ImageWriter("sphereMultiLightSources", 500, 500);
+        camera1.setImageWriter(imageWriter) //
+                .setRayTracerBase(new RayTracerBasic(scene1)) //
+                .renderImage();
+        camera1.writeToImage(); //
+    }
+    /**
      * Produce a picture of two triangles lighted by a directional light
      */
     @Test
@@ -153,6 +175,29 @@ public class LightsTests {
                 .setkL(0.001).setkQ(0.0001));
 
         ImageWriter imageWriter = new ImageWriter("lightTrianglesSpot", 500, 500);
+        camera2.setImageWriter(imageWriter) //
+                .setRayTracerBase(new RayTracerBasic(scene2)) //
+                .renderImage();
+        camera2.writeToImage(); //
+    }
+
+    /**
+     * Produce a picture of two triangles lighted by all three light sources
+     */
+    @Test
+    public void trianglesMultiLightSources() {
+        scene2.geometries.add(triangle1, triangle2);
+        Color trianglesLightColor1 = new Color(800, 100, 240);
+        Color trianglesLightColor2 = new Color(510, 510, 510);
+        Point trianglesLightPosition1 = new Point(30, 10, -100);
+
+        scene2.lights.add(new DirectionalLight(trianglesLightColor1, new Vector(-2, -2, -2)));
+        scene2.lights.add(new PointLight(trianglesLightColor1, trianglesLightPosition1)
+                .setkL(0.001).setkQ(0.0002));
+        scene2.lights.add(new SpotLight(trianglesLightColor2, trianglesLightPosition1, new Vector(-2, -2, -2))
+                .setkL(0.004).setkQ(0.0001));
+
+        ImageWriter imageWriter = new ImageWriter("trianglesMultiLightSources", 500, 500);
         camera2.setImageWriter(imageWriter) //
                 .setRayTracerBase(new RayTracerBasic(scene2)) //
                 .renderImage();

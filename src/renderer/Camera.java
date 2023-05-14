@@ -25,7 +25,7 @@ public class Camera {
     private Vector vUp;
     private Vector vRight;
     private ImageWriter imageWriter;
-    private RayTracerBase rayTracerBase;
+    private RayTracerBase rayTracer;
     double width = 0;
     double height = 0;
     double distance = 0;
@@ -71,7 +71,7 @@ public class Camera {
     }
 
     public Camera setRayTracerBase(RayTracerBase rayTracerBase) {
-        this.rayTracerBase = rayTracerBase;
+        this.rayTracer = rayTracerBase;
         return this;
     }
 
@@ -97,8 +97,11 @@ public class Camera {
         return new Ray(this.location, Vij);
     }
 
+    /**
+     * cast ray
+     */
     private Color castRay(int nX, int nY, int j, int i) {
-        return this.rayTracerBase.traceRay(this.constructRay(nX, nY, j, i));
+        return this.rayTracer.traceRay(this.constructRay(nX, nY, j, i));
     }
 
     /**
@@ -106,7 +109,7 @@ public class Camera {
      * Throws UnsupportedOperationException if any of the required resources are missing (rayTracerBase, imageWriter, width, height, distance).
      */
     public void renderImage() {
-        if (this.rayTracerBase == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
+        if (this.rayTracer == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
             throw new UnsupportedOperationException("MissingResourcesException");
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();

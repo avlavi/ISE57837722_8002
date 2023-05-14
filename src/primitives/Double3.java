@@ -3,6 +3,9 @@
  */
 package primitives;
 
+import java.util.Scanner;
+
+import static java.lang.Double.parseDouble;
 import static primitives.Util.isZero;
 
 /** This class will serve all primitive classes based on three numbers
@@ -37,6 +40,16 @@ public class Double3 {
       this.d1 = value;
       this.d2 = value;
       this.d3 = value;
+   }
+
+   /** cast string wrote as "XX YY ZZ" to Double3
+    * @param  str the string to cast
+    * @return     the Double3 represented by the string*/
+   static public Double3 parseDouble3(String str) {
+      Scanner stringScanner = new Scanner(str);
+      return new Double3(parseDouble(stringScanner.next()),
+              parseDouble(stringScanner.next()),
+              parseDouble(stringScanner.next()));
    }
 
    @Override
