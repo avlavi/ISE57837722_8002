@@ -13,6 +13,7 @@ import static primitives.Util.alignZero;
  * A basic implementation of the {@code RayTracerBase} class that computes the color of the closest intersection point with the scene.
  */
 public class RayTracerBasic extends RayTracerBase {
+    private static final double DELTA = 0.1;//Constant for rayhead offset size for shading rays
 
     /**
      * Creates a new instance of the {@code RayTracerBasic} class with the specified scene.
@@ -61,9 +62,11 @@ public class RayTracerBasic extends RayTracerBase {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l));
             if (nl * nv > 0) { // sign(nl) == sing(nv)
-                Color iL = lightSource.getIntensity(gp.point);
-                color = color.add(iL.scale(calcDiffusive(mat, nl)),
-                        iL.scale(calcSpecular(mat, n, l, nl, v)));
+                if (unshaded(gp, lightSource, l, n, nl)) {
+                    Color iL = lightSource.getIntensity(gp.point);
+                    color = color.add(iL.scale(calcDiffusive(mat, nl)),
+                            iL.scale(calcSpecular(mat, n, l, nl, v)));
+                }
             }
         }
         return color;
@@ -94,6 +97,21 @@ public class RayTracerBasic extends RayTracerBase {
     private Double3 calcSpecular(Material material, Vector n, Vector l, double nl, Vector v) {
         Vector r = l.subtract(n.scale(l.dotProduct(n)).scale(2)).normalize();
         return material.kS.scale(Math.pow(Math.max(0, v.dotProduct(r) * (-1)), material.nShininess));
+    }
+
+    //From the non-shading test method between a point and the light source
+    private boolean unshaded(GeoPoint gp, LightSource light, Vector l, Vector n, double nl) {
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Vector delta = n.scale(nl < 0 ? DELTA : -DELTA);
+        Point point = gp.point.add(delta);
+        Ray lightRay = new Ray(point, lightDirection);
+        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+        if (intersections == null) return true;
+        double pointDistance = light.getDistance(point);
+        for (GeoPoint element : intersections) {
+            if (light.getDistance(element.point) < pointDistance) return false;
+        }
+        return true;
     }
 }
 

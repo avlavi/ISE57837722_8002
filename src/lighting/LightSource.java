@@ -25,5 +25,6 @@ public interface LightSource {
      * @return The direction of the light from the specified point.
      */
     public Vector getL(Point p);
+    public double getDistance(Point point);
 }
 
