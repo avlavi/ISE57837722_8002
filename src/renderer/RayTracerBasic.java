@@ -35,7 +35,7 @@ public class RayTracerBasic extends RayTracerBase {
      * Computes the color of the intersection point using the Phong reflection model.
      *
      * @param point the intersection point
-     * @return the color of the intersection point
+     * @return the color of the intersection point.
      */
     private Color calcColor(GeoPoint point, Ray ray) {
         return this.scene.ambientLight.getIntensity().add(calcLocalEffects(point, ray));
