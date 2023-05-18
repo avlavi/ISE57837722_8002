@@ -105,12 +105,11 @@ public class RayTracerBasic extends RayTracerBase {
         Vector delta = n.scale(nl < 0 ? DELTA : -DELTA);
         Point point = gp.point.add(delta);
         Ray lightRay = new Ray(point, lightDirection);
-        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+        List<Point> intersections = scene.geometries.findIntersections(lightRay);
         if (intersections == null) return true;
-        double pointDistance = light.getDistance(point);
-        for (GeoPoint element : intersections) {
-            if (light.getDistance(element.point) < pointDistance) return false;
-        }
+        Point p = lightRay.findClosestPoint(intersections);
+        if (light.getDistance(point) > point.distance(p))
+            return false;
         return true;
     }
 }
