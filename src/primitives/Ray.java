@@ -18,14 +18,14 @@ public class Ray {
     public Ray(Point head, Vector direction, Vector normal)//con and move in a given direction
     {
         this.dir = direction.normalize();
-        if(isZero(direction.dotProduct(normal))) {
+        if (isZero(direction.dotProduct(normal))) {
             this.p0 = head;
-        }
-        else if(direction.dotProduct(normal) > 0)
+        } else if (direction.dotProduct(normal) > 0)
             this.p0 = head.add(normal.scale(DELTA));
         else
             this.p0 = head.add(normal.scale(-DELTA));
     }
+
     public Ray(Point p0, Vector dir) {//con
         if (dir == null)
             throw new NullPointerException("The given vector is null");
@@ -92,6 +92,7 @@ public class Ray {
      * @throws NullPointerException if the input list is null
      */
     public GeoPoint findClosestGeoPoint(List<GeoPoint> points) {
+        if (points == null) return null;
         GeoPoint closestPoint = points.get(0);
         double distance = closestPoint.point.distance(p0);
         for (GeoPoint element : points) {

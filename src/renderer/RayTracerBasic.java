@@ -64,13 +64,13 @@ public class RayTracerBasic extends RayTracerBase {
         Vector n = gp.geometry.getNormal(gp.point);
         Ray reflectedRay = constructReflectedRay(n, gp.point, ray);
         GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
-        if (!(kkr.lowerThan(MIN_CALC_COLOR_K))) {
+        if (!(kkr.lowerThan(MIN_CALC_COLOR_K)) && reflectedPoint != null) {
             color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, kkr).scale(kr));
         }
         Double3 kt = mat.kT, kkt = k.product(kt);
-        Ray refractedRay = constructRefractedRay(n,gp.point, ray);
+        Ray refractedRay = constructRefractedRay(n, gp.point, ray);
         GeoPoint refractedPoint = findClosestIntersection(refractedRay);
-        if (!(kkt.lowerThan(MIN_CALC_COLOR_K))) {
+        if (!(kkt.lowerThan(MIN_CALC_COLOR_K)) && refractedPoint != null) {
             color = color.add(calcColor(refractedPoint, refractedRay, level - 1, kkt).scale(kt));
         }
         return color;
@@ -137,12 +137,11 @@ public class RayTracerBasic extends RayTracerBase {
     //From the non-shading test method between a point and the light source
     private boolean unshaded(GeoPoint gp, LightSource light, Vector l, Vector n, double nl) {
         Vector lightDirection = l.scale(-1); // from point to light source
-        Vector delta = n.scale(nl < 0 ? DELTA : -DELTA);
-        Point point = gp.point.add(delta);
-        Ray lightRay = new Ray(point, lightDirection);
+        Ray lightRay = new Ray(gp.point, lightDirection, n);
+        Point point = lightRay.getP0();
         List<Point> intersections = scene.geometries.findIntersections(lightRay);
         if (intersections == null) return true;
-        if (gp.geometry.getMaterial().kT == Double3.ZERO) {
+        if (gp.geometry.getMaterial().kT != Double3.ZERO) {
             for (Point element : intersections) {
                 if (light.getDistance(point) > point.distance(element))
                     return false;
@@ -152,7 +151,7 @@ public class RayTracerBasic extends RayTracerBase {
     }
 
     private Ray constructReflectedRay(Vector n, Point point, Ray inRay) {
-        Vector sub = n.scale(inRay.getDir().dotProduct(n) * 2);
+        Vector sub = n.scale(inRay.getDir().dotProduct(n)).scale(2);
         Vector dir = inRay.getDir().subtract(sub);
         return new Ray(point, dir, n);
     }
