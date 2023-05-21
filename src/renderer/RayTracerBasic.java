@@ -1,5 +1,6 @@
 package renderer;
 
+import geometries.Intersectable;
 import lighting.LightSource;
 import primitives.*;
 import scene.Scene;
@@ -14,6 +15,10 @@ import static primitives.Util.alignZero;
  */
 public class RayTracerBasic extends RayTracerBase {
     private static final double DELTA = 0.1;//Constant for rayhead offset size for shading rays
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final double MIN_CALC_COLOR_K = 0.001;
+    private static final Double3 INITIAL_K = Double3.ONE;
+
 
     /**
      * Creates a new instance of the {@code RayTracerBasic} class with the specified scene.
@@ -24,11 +29,14 @@ public class RayTracerBasic extends RayTracerBase {
         super(scene);
     }
 
+    private GeoPoint findClosestIntersection(Ray ray) {
+        return ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
+    }
+
     @Override
     public Color traceRay(Ray ray) {
-        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(ray);
-        if (intersections == null) return scene.background;
-        GeoPoint closestPoint = ray.findClosestGeoPoint(intersections);
+        GeoPoint closestPoint = findClosestIntersection(ray);
+        if (closestPoint == null) return scene.background;
         return calcColor(closestPoint, ray);
     }
 
@@ -39,8 +47,35 @@ public class RayTracerBasic extends RayTracerBase {
      * @return the color of the intersection point.
      */
     private Color calcColor(GeoPoint point, Ray ray) {
-        return this.scene.ambientLight.getIntensity().add(calcLocalEffects(point, ray));
+        return calcColor(point, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K)
+                .add(scene.ambientLight.getIntensity());
+
     }
+
+    private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
+        Color color = calcLocalEffects(gp, ray);
+        return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
+    }
+
+    private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
+        Color color = Color.BLACK;
+        Material mat = gp.geometry.getMaterial();
+        Double3 kr = mat.kR, kkr = k.product(kr);
+        Vector n = gp.geometry.getNormal(gp.point);
+        Ray reflectedRay = constructReflectedRay(n, gp.point, ray);
+        GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
+        if (!(kkr.lowerThan(MIN_CALC_COLOR_K))) {
+            color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, kkr).scale(kr));
+        }
+        Double3 kt = mat.kT, kkt = k.product(kt);
+        Ray refractedRay = constructRefractedRay(n,gp.point, ray);
+        GeoPoint refractedPoint = findClosestIntersection(refractedRay);
+        if (!(kkt.lowerThan(MIN_CALC_COLOR_K))) {
+            color = color.add(calcColor(refractedPoint, refractedRay, level - 1, kkt).scale(kt));
+        }
+        return color;
+    }
+
 
     /**
      * Calculates the local effects of the given geometry point and ray, taking into account
@@ -107,10 +142,23 @@ public class RayTracerBasic extends RayTracerBase {
         Ray lightRay = new Ray(point, lightDirection);
         List<Point> intersections = scene.geometries.findIntersections(lightRay);
         if (intersections == null) return true;
-        Point p = lightRay.findClosestPoint(intersections);
-        if (light.getDistance(point) > point.distance(p))
-            return false;
+        if (gp.geometry.getMaterial().kT == Double3.ZERO) {
+            for (Point element : intersections) {
+                if (light.getDistance(point) > point.distance(element))
+                    return false;
+            }
+        }
         return true;
+    }
+
+    private Ray constructReflectedRay(Vector n, Point point, Ray inRay) {
+        Vector sub = n.scale(inRay.getDir().dotProduct(n) * 2);
+        Vector dir = inRay.getDir().subtract(sub);
+        return new Ray(point, dir, n);
+    }
+
+    private Ray constructRefractedRay(Vector n, Point point, Ray inRay) {
+        return new Ray(point, inRay.getDir(), n);
     }
 }
 

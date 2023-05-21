@@ -8,10 +8,24 @@ import geometries.Intersectable.GeoPoint;
 import java.util.List;
 import java.util.Objects;
 
+import static primitives.Util.isZero;
+
 public class Ray {
+    private static final double DELTA = 0.1;//Constant for rayhead offset size for shading rays
     final Point p0;//The starting point of the ray
     final Vector dir;//The direction vector of the ray
 
+    public Ray(Point head, Vector direction, Vector normal)//con and move in a given direction
+    {
+        this.dir = direction.normalize();
+        if(isZero(direction.dotProduct(normal))) {
+            this.p0 = head;
+        }
+        else if(direction.dotProduct(normal) > 0)
+            this.p0 = head.add(normal.scale(DELTA));
+        else
+            this.p0 = head.add(normal.scale(-DELTA));
+    }
     public Ray(Point p0, Vector dir) {//con
         if (dir == null)
             throw new NullPointerException("The given vector is null");
