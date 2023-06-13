@@ -5,6 +5,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.Random;
+
 import static java.awt.Color.RED;
 import static java.awt.Color.YELLOW;
 
@@ -26,6 +28,7 @@ public class Camera {
     private Vector vRight;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
+    private boolean isImproved = false;
     double width = 0;
     double height = 0;
     double distance = 0;
@@ -58,6 +61,15 @@ public class Camera {
     }
 
     /**
+     * Sets the parameter that represent weather to improve the picture whit anti analyzing or not
+     * default is false
+     */
+    public Camera setImproved(boolean improved) {
+        this.isImproved = improved;
+        return this;
+    }
+
+    /**
      * Sets the distance between the camera and the view plane.
      */
     public Camera setVPDistance(double distance) {
@@ -65,11 +77,17 @@ public class Camera {
         return this;
     }
 
+    /**
+     * Sets the imageWriter.
+     */
     public Camera setImageWriter(ImageWriter imageWriter) {
         this.imageWriter = imageWriter;
         return this;
     }
 
+    /**
+     * Sets the rayTracer.
+     */
     public Camera setRayTracerBase(RayTracerBase rayTracerBase) {
         this.rayTracer = rayTracerBase;
         return this;
@@ -84,7 +102,7 @@ public class Camera {
      * @param i  the y-coordinate of the pixel in the view plane
      * @return the constructed Ray object
      */
-    public Ray constructRay(int nX, int nY, int j, int i) {
+    public Ray constructRay(int nX, int nY, double j, double i) {
         Point Pc = this.location.add(vTo.scale(this.distance));
         double rY = this.height / nY;
         double rX = this.width / nX;
@@ -100,7 +118,7 @@ public class Camera {
     /**
      * cast ray
      */
-    private Color castRay(int nX, int nY, int j, int i) {
+    private Color castRay(int nX, int nY, double j, double i) {
         return this.rayTracer.traceRay(this.constructRay(nX, nY, j, i));
     }
 
@@ -111,15 +129,48 @@ public class Camera {
     public void renderImage() {
         if (this.rayTracer == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
             throw new UnsupportedOperationException("MissingResourcesException");
+        if(isImproved){
+            this.renderImageRandomeAnalizyng();
+            return;
+        }
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();
+
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
-                imageWriter.writePixel(j, i, this.castRay(nX, nY, j, i));
+                imageWriter.writePixel(j, i, castRay(nX, nY, j, i));
             }
         }
     }
 
+    /**
+     * Renders the image by casting rays from the camera through each pixel of the image and writing the resulting color to the imageWriter.
+     * Throws UnsupportedOperationException if any of the required resources are missing (rayTracerBase, imageWriter, width, height, distance).
+     */
+    public void renderImageRandomeAnalizyng() {
+        int nX = imageWriter.getNx();
+        int nY = imageWriter.getNy();
+        double halfPixelHeight = (height / nY) / 2.0;
+        double halfPixelWidth = (width / nX) / 2.0;
+        Color color = Color.BLACK;
+        Color colorHelp;
+        Random random = new Random();
+        double rand1 = 0;
+        double rand2 = 0;
+        int sizeBeam = 1000;
+        for (int i = 0; i < nY; i++) {
+            for (int j = 0; j < nX; j++) {
+                for (int k = 0; k < sizeBeam; k++) {
+                    rand1 = halfPixelHeight * (random.nextDouble() * 2.0 - 1.0);
+                    rand2 = halfPixelWidth * (random.nextDouble() * 2.0 - 1.0);
+                    colorHelp = this.castRay(nX, nY, j + rand2, i + rand1);
+                    color = color.add(colorHelp);
+                }
+                imageWriter.writePixel(j, i, color.reduce(sizeBeam));
+                color = Color.BLACK;
+            }
+        }
+    }
     /**
      * Draws a grid on the image by writing a specified color to the pixels that fall on the grid lines.
      * Throws UnsupportedOperationException if imageWriter object is null.

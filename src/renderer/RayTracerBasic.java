@@ -53,11 +53,29 @@ public class RayTracerBasic extends RayTracerBase {
 
     }
 
+    /**
+     * Calculates the color at a given geometric point based on the reflection and refraction effects.
+     *
+     * @param gp    The geometric point to calculate the color for.
+     * @param ray   The incident ray at the geometric point.
+     * @param level The recursion level.
+     * @param k     The attenuation factor for the color calculation.
+     * @return The calculated color at the given geometric point.
+     */
     private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
         Color color = calcLocalEffects(gp, ray, k);
         return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
     }
 
+    /**
+     * Calculates the global reflection and refraction effects for a given geometric point.
+     *
+     * @param gp    The geometric point to calculate the effects for.
+     * @param ray   The incident ray at the geometric point.
+     * @param level The recursion level.
+     * @param k     The attenuation factor for the effects calculation.
+     * @return The accumulated color based on the global effects.
+     */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
         Color color = Color.BLACK;
         Material mat = gp.geometry.getMaterial();
@@ -65,17 +83,24 @@ public class RayTracerBasic extends RayTracerBase {
         Vector n = gp.geometry.getNormal(gp.point);
         Ray reflectedRay = constructReflectedRay(n, gp.point, ray);
         GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
+
+        // Calculate reflection effect if the attenuation factor is above the minimum threshold
         if (!(kkr.lowerThan(MIN_CALC_COLOR_K)) && reflectedPoint != null) {
             color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, kkr).scale(kr));
         }
+
         Double3 kt = mat.kT, kkt = k.product(kt);
         Ray refractedRay = constructRefractedRay(n, gp.point, ray);
         GeoPoint refractedPoint = findClosestIntersection(refractedRay);
+
+        // Calculate refraction effect if the attenuation factor is above the minimum threshold
         if (!(kkt.lowerThan(MIN_CALC_COLOR_K)) && refractedPoint != null) {
             color = color.add(calcColor(refractedPoint, refractedRay, level - 1, kkt).scale(kt));
         }
+
         return color;
     }
+
 
 
     /**
@@ -136,7 +161,15 @@ public class RayTracerBasic extends RayTracerBase {
         return material.kS.scale(Math.pow(Math.max(0, v.dotProduct(r) * (-1)), material.nShininess));
     }
 
-    //From the non-shading test method between a point and the light source
+    /**
+     * Calculates the transparency factor between a geometric point and a light source.
+     *
+     * @param gp     The geometric point to calculate the transparency for.
+     * @param light  The light source.
+     * @param l      The direction vector from the point to the light source.
+     * @param n      The normal vector at the point.
+     * @return The transparency factor between the geometric point and the light source.
+     */
     private Double3 transparency(GeoPoint gp, LightSource light, Vector l, Vector n) {
         Vector lightDirection = l.scale(-1); // from point to light source
         Ray lightRay = new Ray(gp.point, lightDirection, n);
@@ -152,12 +185,28 @@ public class RayTracerBasic extends RayTracerBase {
         return ktr;
     }
 
+    /**
+     * Constructs a reflected ray based on the given normal vector, point, and incident ray.
+     *
+     * @param n        The normal vector at the reflection point.
+     * @param point    The reflection point.
+     * @param inRay    The incident ray.
+     * @return The constructed reflected ray.
+     */
     private Ray constructReflectedRay(Vector n, Point point, Ray inRay) {
         Vector sub = n.scale(inRay.getDir().dotProduct(n)).scale(2);
         Vector dir = inRay.getDir().subtract(sub);
         return new Ray(point, dir, n);
     }
 
+    /**
+     * Constructs a refracted ray based on the given normal vector, point, and incident ray.
+     *
+     * @param n        The normal vector at the refraction point.
+     * @param point    The refraction point.
+     * @param inRay    The incident ray.
+     * @return The constructed refracted ray.
+     */
     private Ray constructRefractedRay(Vector n, Point point, Ray inRay) {
         return new Ray(point, inRay.getDir(), n);
     }
