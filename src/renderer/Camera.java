@@ -28,7 +28,7 @@ public class Camera {
     private Vector vRight;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
-    private boolean isImproved = false;
+    private int numberOfRays = 0;
     double width = 0;
     double height = 0;
     double distance = 0;
@@ -64,8 +64,8 @@ public class Camera {
      * Sets the parameter that represent weather to improve the picture whit anti analyzing or not
      * default is false
      */
-    public Camera setImproved(boolean improved) {
-        this.isImproved = improved;
+    public Camera setNumberOfRays(int numberOfRays) {
+        this.numberOfRays = numberOfRays;
         return this;
     }
 
@@ -129,7 +129,7 @@ public class Camera {
     public void renderImage() {
         if (this.rayTracer == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
             throw new UnsupportedOperationException("MissingResourcesException");
-        if(isImproved){
+        if(numberOfRays != 0){
             this.renderImageRandomeAnalizyng();
             return;
         }

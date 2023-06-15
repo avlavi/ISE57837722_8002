@@ -1,6 +1,7 @@
 package renderer;
 
 import static java.awt.Color.*;
+
 import org.junit.jupiter.api.Test;
 
 import lighting.*;
@@ -166,6 +167,7 @@ public class OurPicture2Test {
 
         camera.setImageWriter(imagewriter)
                 .setRayTracerBase(new RayTracerBasic(scene))
+                .setNumberOfRays(300)
                 .renderImage();
         camera.writeToImage();
 
