@@ -40,7 +40,6 @@ public class RayTracerBasic extends RayTracerBase {
         if (closestPoint == null) return scene.background;
         return calcColor(closestPoint, ray);
     }
-
     /**
      * Computes the color of the intersection point using the Phong reflection model.
      *

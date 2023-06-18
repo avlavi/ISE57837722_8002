@@ -30,6 +30,7 @@ public class ShadowTests {
                 new SpotLight(new Color(400, 240, 0), spotLocation, new Vector(1, 1, -3)) //
                         .setkL(1E-5).setkQ(1.5E-7));
         camera.setImageWriter(new ImageWriter(pictName, 400, 400)) //
+                .setNumberOfRays(10)
                 .renderImage(); //
         camera.writeToImage();
     }

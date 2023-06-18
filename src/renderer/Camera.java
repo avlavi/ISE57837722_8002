@@ -4,12 +4,13 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
-
 import static java.awt.Color.RED;
 import static java.awt.Color.YELLOW;
-
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 /**
  * Camera class represents a camera in a 3D scene. It defines the camera's location,
@@ -28,7 +29,7 @@ public class Camera {
     private Vector vRight;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
-    private int numberOfRays = 0;
+    private int numberOfRays = 1;
     double width = 0;
     double height = 0;
     double distance = 0;
@@ -65,6 +66,8 @@ public class Camera {
      * default is false
      */
     public Camera setNumberOfRays(int numberOfRays) {
+        if (numberOfRays < 1)
+            throw new IllegalArgumentException("The number of rays must be >= 1");
         this.numberOfRays = numberOfRays;
         return this;
     }
@@ -94,6 +97,39 @@ public class Camera {
     }
 
     /**
+     * Calculates the center coordinates of a pixel on the view plane, given its position in the grid and the indices of the pixel.
+     *
+     * @param nX The number of pixels in the x-axis of the view plane grid.
+     * @param nY The number of pixels in the y-axis of the view plane grid.
+     * @param j  The index of the pixel in the x-axis of the grid.
+     * @param i  The index of the pixel in the y-axis of the grid.
+     * @return The center coordinates of the specified pixel as a Point.
+     */
+    private Point getCenterOfPixel(int nX, int nY, double j, double i) {
+        // calculate the ratio of the pixel by the height and by the width of the view plane
+        // the ratio Ry = h/Ny, the height of the pixel
+        double rY = alignZero(height / nY);
+        // the ratio Rx = w/Nx, the width of the pixel
+        double rX = alignZero(width / nX);
+
+        // Xj = (j - (Nx -1)/2) * Rx
+        double xJ = alignZero((j - ((nX - 1d) / 2d)) * rX);
+        // Yi = -(i - (Ny - 1)/2) * Ry
+        double yI = alignZero(-(i - ((nY - 1d) / 2d)) * rY);
+
+        Point pIJ = this.location.add(vTo.scale(this.distance));
+
+        if (!isZero(xJ)) {
+            pIJ = pIJ.add(vRight.scale(xJ));
+        }
+        if (!isZero(yI)) {
+            pIJ = pIJ.add(vUp.scale(yI));
+        }
+        return pIJ;
+    }
+
+
+    /**
      * Constructs a ray from the camera to a specific point in the view plane.
      *
      * @param nX the number of pixels along the x-axis of the view plane
@@ -103,24 +139,89 @@ public class Camera {
      * @return the constructed Ray object
      */
     public Ray constructRay(int nX, int nY, double j, double i) {
-        Point Pc = this.location.add(vTo.scale(this.distance));
-        double rY = this.height / nY;
-        double rX = this.width / nX;
-        double yI = -(i - (double) (nY - 1) / 2) * rY;
-        double xJ = (j - (double) (nX - 1) / 2) * rX;
-        Point Pij = Pc;
-        if (xJ != 0) Pij = Pij.add(vRight.scale(xJ));
-        if (yI != 0) Pij = Pij.add(vUp.scale(yI));
-        Vector Vij = Pij.subtract(this.location);
-        return new Ray(this.location, Vij);
+        Point Pij = getCenterOfPixel(nX, nY, j, i);
+        return new Ray(this.location, Pij.subtract(this.location));
     }
 
+
     /**
-     * cast ray
+     * Constructs a list of rays originating from the camera's location and passing through the specified pixel.
+     * The pixel is divided into grid.
+     *
+     * @param nX The number of pixels in the x-axis of the view plane grid.
+     * @param nY The number of pixels in the y-axis of the view plane grid.
+     * @param j  The index of the pixel in the x-axis of the grid.
+     * @param i  The index of the pixel in the y-axis of the grid.
+     * @return A list of rays passing through the specified pixel, divided into segments.
+     */
+    public List<Ray> constructRays(int nX, int nY, int j, int i) {
+        Point pIJ = getCenterOfPixel(nX, nY, j, i);
+
+        // divide the pixel into segments and find the middle for every segment
+        // ratio segment width and length
+        List<Ray> rays = new LinkedList<>();
+        double rY = height / nY;
+        double rX = width / nX;
+        double sRY = rY / numberOfRays;
+        double sRX = rX / numberOfRays;
+
+        // segment[i,j] center
+        double sYI, sXJ;
+        Point sPIJ;
+
+        for (int si = 0; si < numberOfRays; si++) {
+            for (int sj = 0; sj < numberOfRays; sj++) {
+                sPIJ = pIJ;
+                sYI = -(si - (numberOfRays - 1) / 2d) * sRY;
+                sXJ = (sj - (numberOfRays - 1) / 2d) * sRX;
+
+                if (!isZero(sXJ))
+                    sPIJ = sPIJ.add(vRight.scale(sXJ));
+                if (!isZero(sYI))
+                    sPIJ = sPIJ.add(vUp.scale(sYI)); // sPIJ is the segment center
+
+                rays.add(new Ray(location, sPIJ.subtract(location)));
+            }
+        }
+
+        return rays;
+    }
+
+
+    /**
+     * Casts a single ray through the specified pixel to compute the color by tracing the ray.
+     *
+     * @param nX The number of pixels in the x-axis of the view plane grid.
+     * @param nY The number of pixels in the y-axis of the view plane grid.
+     * @param j  The index of the pixel in the x-axis of the grid.
+     * @param i  The index of the pixel in the y-axis of the grid.
+     * @return The computed color for the pixel by tracing the ray.
      */
     private Color castRay(int nX, int nY, double j, double i) {
         return this.rayTracer.traceRay(this.constructRay(nX, nY, j, i));
     }
+
+
+    /**
+     * Casts multiple rays through the specified pixel to compute the color by tracing each ray and performing anti-aliasing.
+     *
+     * @param nX The number of pixels in the x-axis of the view plane grid.
+     * @param nY The number of pixels in the y-axis of the view plane grid.
+     * @param j  The index of the pixel in the x-axis of the grid.
+     * @param i  The index of the pixel in the y-axis of the grid.
+     * @return The computed color for the pixel after casting rays and performing anti-aliasing.
+     */
+    public Color castRays(int nX, int nY, int j, int i) {
+        List<Ray> rays = constructRays(nX, nY, j, i);
+        Color color = Color.BLACK;
+
+        for (int k = 0; k < rays.size(); k++)
+            color = color.add(rayTracer.traceRay(rays.get(k)));
+
+        color = color.reduce(rays.size());
+        return color;
+    }
+
 
     /**
      * Renders the image by casting rays from the camera through each pixel of the image and writing the resulting color to the imageWriter.
@@ -129,48 +230,27 @@ public class Camera {
     public void renderImage() {
         if (this.rayTracer == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
             throw new UnsupportedOperationException("MissingResourcesException");
-        if(numberOfRays != 0){
-            this.renderImageRandomeAnalizyng();
-            return;
+        if (numberOfRays == 0) {
+            throw new IllegalArgumentException("num Of Rays can not be 0");
         }
+
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();
-
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                imageWriter.writePixel(j, i, castRay(nX, nY, j, i));
-            }
-        }
-    }
-
-    /**
-     * Renders the image by casting rays from the camera through each pixel of the image and writing the resulting color to the imageWriter.
-     * Throws UnsupportedOperationException if any of the required resources are missing (rayTracerBase, imageWriter, width, height, distance).
-     */
-    public void renderImageRandomeAnalizyng() {
-        int nX = imageWriter.getNx();
-        int nY = imageWriter.getNy();
-        double halfPixelHeight = (height / nY) / 2.0;
-        double halfPixelWidth = (width / nX) / 2.0;
-        Color color = Color.BLACK;
-        Color colorHelp;
-        Random random = new Random();
-        double rand1 = 0;
-        double rand2 = 0;
-        int sizeBeam = 1000;
-        for (int i = 0; i < nY; i++) {
-            for (int j = 0; j < nX; j++) {
-                for (int k = 0; k < sizeBeam; k++) {
-                    rand1 = halfPixelHeight * (random.nextDouble() * 2.0 - 1.0);
-                    rand2 = halfPixelWidth * (random.nextDouble() * 2.0 - 1.0);
-                    colorHelp = this.castRay(nX, nY, j + rand2, i + rand1);
-                    color = color.add(colorHelp);
+        if (numberOfRays == 1) {
+            for (int i = 0; i < nY; i++) {
+                for (int j = 0; j < nX; j++) {
+                    imageWriter.writePixel(j, i, castRay(nX, nY, j, i));
                 }
-                imageWriter.writePixel(j, i, color.reduce(sizeBeam));
-                color = Color.BLACK;
+            }
+        } else {//Anti-aliasing* improve is on
+            for (int i = 0; i < nY; i++) {
+                for (int j = 0; j < nX; j++) {
+                    imageWriter.writePixel(j, i, castRays(nX, nY, j, i));
+                }
             }
         }
     }
+
     /**
      * Draws a grid on the image by writing a specified color to the pixels that fall on the grid lines.
      * Throws UnsupportedOperationException if imageWriter object is null.
