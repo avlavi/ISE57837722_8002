@@ -21,7 +21,7 @@ public class Material {
     public int nShininess = 0;
     public Double3 kT = Double3.ZERO;
     public Double3 kR = Double3.ZERO;
-
+    public double Glossy=0;
 
     /**
      * Sets the diffuse coefficient of the material.
@@ -31,6 +31,11 @@ public class Material {
      */
     public Material setkD(Double3 kD) {
         this.kD = kD;
+        return this;
+    }
+
+    public Material setGlossy(double Glossy) {
+        this.Glossy = Glossy;
         return this;
     }
 

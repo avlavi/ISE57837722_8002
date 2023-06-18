@@ -20,14 +20,15 @@ public class OurPicture2Test {
         Camera camera = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(1, 0, 0)) //
                 .setVPDistance(600).setVPSize(250, 250); //
 
-        Point S1 = new Point(-165, 170, -500);
+        Point S1 = new Point(-165, 170, -500);//D
         Point S2 = new Point(-165, -150, -500);
         Point S3 = new Point(-165, -150, -100);
-        Point S4 = new Point(-165, 170, -100);
+        Point S4 = new Point(-165, 170, -100);//G
         Point SP1 = new Point(-145, 135, -120);
         Point SP2 = new Point(-145, 120, -180);
         Point SP3 = new Point(-145, 105, -240);
-        Point be1 = new Point(150, 170, -500);
+        Point be1 = new Point(150, 170, -500);//H
+        Point be5 = new Point(150, 170, -100);//K
         Point be2 = new Point(150, -150, -500);
         Point light = new Point(300, -70, 0);
         Point h1 = new Point(-165, 80, -220);
@@ -79,21 +80,26 @@ public class OurPicture2Test {
 
         scene.geometries.add(
                 new Polygon(S1, S2, S3, S4).setEmission(new Color(GREEN)) //surface
-                        .setMaterial(new Material().setkD(0.5).setkS(0.8).setkR(0.1).setnShininess(20)),
+                        .setMaterial(new Material().setkD(0.5).setkS(0.8).setkR(1).setnShininess(20).setGlossy(0.9)),
+                new Polygon(S2, S1, be1, be2).setEmission(new Color(10, 100, 225)) //background
+                        .setMaterial(new Material().setkD(0.5).setkS(0.8).setkR(0).setnShininess(20)),
+                new Polygon(S4, S1, be1, be5).setEmission(new Color(GREEN)) //MIRROR
+                        .setMaterial(new Material().setkD(0.5).setkS(0.8).setkR(1).setkT(1).setnShininess(20).setGlossy(0.9)),
+                //garden
                 new Sphere(20, SP1).setEmission(new Color(BLUE))
                         .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0).setkR(0).setnShininess(20)),
                 new Sphere(20, (SP2)).setEmission(new Color(RED))
-                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0).setkR(0).setnShininess(20)),
+                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0.3).setkR(0).setnShininess(20)),
                 new Sphere(20, SP3).setEmission(new Color(51, 153, 255))
-                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0.1).setkR(0).setnShininess(20)),
-                new Polygon(S2, S1, be1, be2).setEmission(new Color(10, 100, 255)) //background
-                        .setMaterial(new Material().setkD(0.5).setkS(0.8).setkR(0).setnShininess(20)),
+                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0).setkR(0).setnShininess(20)),
+                //hose
                 new Polygon(h1, h3, h8, h7).setEmission(new Color(GRAY)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkT(0).setkR(0).setnShininess(20)),
                 new Polygon(h5, h6, h8, h7).setEmission(new Color(GRAY)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkT(0).setkR(0).setnShininess(20)),
                 new Polygon(h6, h4, h3, h8).setEmission(new Color(GRAY)) //
                         .setMaterial(new Material().setkD(0).setkS(0).setkT(0).setkR(0).setnShininess(0)),
+                //roof
                 new Triangle(h4, h9, h3).setEmission(new Color(RED)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
                 new Triangle(h6, h10, h8).setEmission(new Color(RED)) //
@@ -116,24 +122,26 @@ public class OurPicture2Test {
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
                 new Polygon(g, h4, h6, h).setEmission(new Color(GRAY)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
-                new Sphere(5, l1).setEmission(new Color(YELLOW))
-                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0.1).setkR(0.2).setnShininess(20)),
-
-                new Sphere(15, new Point(-135, 45, -160.75))
-                        .setEmission(new Color(51, 0, 0)) //
-                        .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
                 new Sphere(15, DD)
                         .setEmission(new Color(51, 0, 0)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
-                new Sphere(2, new Point(-130, 46, -147))
-                        .setEmission(new Color(BLUE)) //
+                new Sphere(15, new Point(-115, 45, -150))//head
+                        .setEmission(new Color(51, 0, 0)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
-                new Sphere(2, new Point(-132, 55, -150))
-                        .setEmission(new Color(BLUE)) //
+                new Sphere(2, new Point(-103, 40, -98))//eyeR
+                        .setEmission(new Color(BLUE))
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
-                new Sphere(5, new Point(-137, 50, -148))
+                new Sphere(2, new Point(-105, 50, -125))//eyeL
+                        .setEmission(new Color(BLUE))
+                        .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
+                new Sphere(5, new Point(-110, 45, -100))//nose
                         .setEmission(new Color(153, 102, 0)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
+                new Sphere(20, new Point(-145, 45, -150))//body
+                        .setEmission(new Color(51, 0, 0)) //
+                        .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
+                new Sphere(5, l1).setEmission(new Color(YELLOW))//hose light
+                        .setMaterial(new Material().setkD(0.5).setkS(0.4).setkT(0.1).setkR(0.2).setnShininess(20)),
                 new Polygon(A1, A3, A5, A4).setEmission(new Color(GRAY)) //
                         .setMaterial(new Material().setkD(0.95).setkS(0).setkR(0).setkT(0).setnShininess(20)),
                 new Polygon(A1, A4, A7, h3).setEmission(new Color(GRAY)) //
@@ -167,7 +175,7 @@ public class OurPicture2Test {
 
         camera.setImageWriter(imagewriter)
                 .setRayTracerBase(new RayTracerBasic(scene))
-                .setNumberOfRays(300)
+                .setNumberOfRays(10)
                 .renderImage();
         camera.writeToImage();
 
