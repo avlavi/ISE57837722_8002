@@ -16,11 +16,9 @@ import static primitives.Util.isZero;
  * A basic implementation of the {@code RayTracerBase} class that computes the color of the closest intersection point with the scene.
  */
 public class RayTracerBasic extends RayTracerBase {
-    private static final double DELTA = 0.1;//Constant for rayhead offset size for shading rays
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
-    private static final double EPS = 0.1;
 
     private int glossinessRaysNum = 36;
     private double distanceGrid = 25;
@@ -240,14 +238,15 @@ public class RayTracerBasic extends RayTracerBase {
         int numOfRowCol = isZero(glossy)? 1: (int)Math.ceil(Math.sqrt(glossinessRaysNum));
         if (numOfRowCol == 1) return List.of(ray);
         Vector Vup ;
-        double Ax= Math.abs(ray.getDir().getX()), Ay= Math.abs(ray.getDir().getY()), Az= Math.abs(ray.getDir().getZ());
+        Vector dir = ray.getDir();
+        double Ax= Math.abs(dir.getX()), Ay= Math.abs(dir.getY()), Az= Math.abs(dir.getZ());
         if (Ax < Ay)
-            Vup= Ax < Az ?  new Vector(0, -ray.getDir().getZ(), ray.getDir().getY()) :
-                    new Vector(-ray.getDir().getY(), ray.getDir().getX(), 0);
+            Vup= Ax < Az ?  new Vector(0, -dir.getZ(), dir.getY()) :
+                    new Vector(-dir.getY(), dir.getX(), 0);
         else
-            Vup= Ay < Az ?  new Vector(ray.getDir().getZ(), 0, -ray.getDir().getX()) :
-                    new Vector(-ray.getDir().getY(), ray.getDir().getX(), 0);
-        Vector Vright = Vup.crossProduct(ray.getDir()).normalize();
+            Vup= Ay < Az ?  new Vector(dir.getZ(), 0, -dir.getX()) :
+                    new Vector(-dir.getY(), dir.getX(), 0);
+        Vector Vright = Vup.crossProduct(dir).normalize();
         Point pc=ray.getPoint(distanceGrid);
         double step = glossy/sizeGrid;
         Point pij=pc.add(Vright.scale(numOfRowCol/2*-step)).add(Vup.scale(numOfRowCol/2*-step));
@@ -255,15 +254,16 @@ public class RayTracerBasic extends RayTracerBase {
         Point Pij1;
 
         List<Ray> rays = new ArrayList<>();
+        Point p0 = ray.getP0();
         rays.add(ray);
         for (int i = 1; i < numOfRowCol; i++) {
             for (int j = 1; j < numOfRowCol; j++) {
                 Pij1=pij.add(Vright.scale(i*step)).add(Vup.scale(j*step));
-                tempRayVector =  Pij1.subtract(ray.getP0());
-                if(n.dotProduct(tempRayVector) < 0 && direction == 1) //refraction
-                    rays.add(new Ray(ray.getP0(), tempRayVector));
-                if(n.dotProduct(tempRayVector) > 0 && direction == -1) //reflection
-                    rays.add(new Ray(ray.getP0(), tempRayVector));
+                tempRayVector =  Pij1.subtract(p0);
+                if(direction == 1 && n.dotProduct(tempRayVector) < 0) //refraction
+                    rays.add(new Ray(p0, tempRayVector));
+                if(direction == -1 && n.dotProduct(tempRayVector) > 0) //reflection
+                    rays.add(new Ray(p0, tempRayVector));
             }
         }
 
