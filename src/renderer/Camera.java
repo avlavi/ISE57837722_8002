@@ -4,9 +4,11 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
 import static java.awt.Color.RED;
 import static java.awt.Color.YELLOW;
 import static primitives.Util.alignZero;
@@ -29,10 +31,12 @@ public class Camera {
     private Vector vRight;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
-    private int numberOfRays = 1;
     double width = 0;
     double height = 0;
     double distance = 0;
+    private int numberOfRays = 1;
+    private boolean adaptive = false;
+    private int threadsCount = 1;
 
     /**
      * Constructs a new camera with the specified location, direction, and up vector.
@@ -69,6 +73,28 @@ public class Camera {
         if (numberOfRays < 1)
             throw new IllegalArgumentException("The number of rays must be >= 1");
         this.numberOfRays = numberOfRays;
+        return this;
+    }
+
+    /**
+     * set the adaptive
+     *
+     * @return the Camera object
+     */
+    public Camera setAdaptive(boolean adaptive) {
+        this.adaptive = adaptive;
+        return this;
+    }
+
+    /**
+     * set the threadsCount
+     *
+     * @return the Camera object
+     */
+    public Camera setThreadsCount(int threadsCount) {
+        if (threadsCount > 4 || threadsCount < 1)
+            throw new IllegalArgumentException("The number of threads must be between 1 and 4");
+        this.threadsCount = threadsCount;
         return this;
     }
 
@@ -242,13 +268,41 @@ public class Camera {
                     imageWriter.writePixel(j, i, castRay(nX, nY, j, i));
                 }
             }
-        } else {//Anti-aliasing* improve is on
+        } else if (!adaptive) {//Anti-aliasing* improve is on
             for (int i = 0; i < nY; i++) {
                 for (int j = 0; j < nX; j++) {
                     imageWriter.writePixel(j, i, castRays(nX, nY, j, i));
                 }
             }
+        } else {
+            for (int i = 0; i < nY; i++) {
+                for (int j = 0; j < nX; j++) {
+                    imageWriter.writePixel(j, i, AdaptiveSuperSampling(imageWriter.getNx(), imageWriter.getNy(), j, i, numberOfRays));
+                }
+            }
         }
+    }
+
+    /**
+     * Checks the color of the pixel with the help of individual rays and averages between them and only
+     * if necessary continues to send beams of rays in recursion
+     * @param nX Pixel length
+     * @param nY Pixel width
+     * @param j The position of the pixel relative to the y-axis
+     * @param i The position of the pixel relative to the x-axis
+     * @param numOfRays The amount of rays sent
+     * @return Pixel color
+     */
+    private Color AdaptiveSuperSampling(int nX, int nY, int j, int i,  int numOfRays)  {
+
+        int numOfRaysInRowCol = (int)Math.floor(Math.sqrt(numOfRays));
+        Point pIJ = getCenterOfPixel(nX, nY, j, i);
+        double rY = alignZero(height / nY);
+        // the ratio Rx = w/Nx, the width of the pixel
+        double rX = alignZero(width / nX);
+        double PRy = rY/numOfRaysInRowCol;
+        double PRx = rX/numOfRaysInRowCol;
+        return rayTracer.AdaptiveSuperSamplingRec(pIJ, rX, rY, PRx, PRy,this.location,this.vRight, this.vUp,null);
     }
 
     /**

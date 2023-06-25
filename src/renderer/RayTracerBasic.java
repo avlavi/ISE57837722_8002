@@ -7,6 +7,7 @@ import scene.Scene;
 import geometries.Intersectable.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static primitives.Util.alignZero;
@@ -34,9 +35,20 @@ public class RayTracerBasic extends RayTracerBase {
         super(scene);
     }
 
+    public void setDistanceGrid(double distanceGrid) {
+        this.distanceGrid = distanceGrid;
+    }
+
+    /**
+     * Finds the closest intersection between a ray and the geometries in the scene.
+     *
+     * @param ray The ray to find the closest intersection with.
+     * @return The closest intersection point as a GeoPoint object.
+     */
     private GeoPoint findClosestIntersection(Ray ray) {
         return ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
     }
+
 
     @Override
     public Color traceRay(Ray ray) {
@@ -268,6 +280,68 @@ public class RayTracerBasic extends RayTracerBase {
         }
 
         return rays;
+    }
+
+    @Override
+    public Color AdaptiveSuperSamplingRec(Point centerP, double Width, double Height, double minWidth, double minHeight, Point cameraLoc, Vector Vright, Vector Vup, List<Point> prePoints) {
+        if (Width < minWidth * 2 || Height < minHeight * 2) {
+            return this.traceRay(new Ray(cameraLoc, centerP.subtract(cameraLoc))) ;
+        }
+
+        List<Point> nextCenterPList = new LinkedList<>();
+        List<Point> cornersList = new LinkedList<>();
+        List<Color> colorList = new LinkedList<>();
+        Point tempCorner;
+        Ray tempRay;
+        for (int i = -1; i <= 1; i += 2){
+            for (int j = -1; j <= 1; j += 2) {
+                tempCorner = centerP.add(Vright.scale(i * Width / 2)).add(Vup.scale(j * Height / 2));
+                cornersList.add(tempCorner);
+                if (prePoints == null || !isInList(prePoints, tempCorner)) {
+                    tempRay = new Ray(cameraLoc, tempCorner.subtract(cameraLoc));
+                    nextCenterPList.add(centerP.add(Vright.scale(i * Width / 4)).add(Vup.scale(j * Height / 4)));
+                    colorList.add(traceRay(tempRay));
+                }
+            }
+        }
+
+
+        if (nextCenterPList == null || nextCenterPList.size() == 0) {
+            return Color.BLACK;
+        }
+
+
+        boolean isAllEquals = true;
+        Color tempColor = colorList.get(0);
+        for (Color color : colorList) {
+            if (!tempColor.isAlmostEquals(color))
+                isAllEquals = false;
+        }
+        if (isAllEquals && colorList.size() > 1)
+            return tempColor;
+
+
+        tempColor = Color.BLACK;
+        for (Point center : nextCenterPList) {
+            tempColor = tempColor.add(AdaptiveSuperSamplingRec(center, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup, cornersList));
+        }
+        return tempColor.reduce(nextCenterPList.size());
+
+
+    }
+
+    /**
+     * Find a point in the list
+     * @param pointsList the list
+     * @param point the point that we look for
+     * @return
+     */
+    private boolean isInList(List<Point> pointsList, Point point) {
+        for (Point tempPoint : pointsList) {
+            if(point.equals(tempPoint))
+                return true;
+        }
+        return false;
     }
 }
 
