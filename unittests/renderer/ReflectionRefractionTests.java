@@ -39,7 +39,7 @@ public class ReflectionRefractionTests {
 
         camera.setImageWriter(new ImageWriter("refractionTwoSpheres", 500, 500)) //
                 .setRayTracerBase(new RayTracerBasic(scene)) //
-                .renderImage(); //
+                .renderImage();
         camera.writeToImage();
     }
 
@@ -72,7 +72,7 @@ public class ReflectionRefractionTests {
         ImageWriter imageWriter = new ImageWriter("reflectionTwoSpheresMirrored", 500, 500);
         camera.setImageWriter(imageWriter) //
                 .setRayTracerBase(new RayTracerBasic(scene)) //
-                .renderImage(); //
+                .renderImage();
         camera.writeToImage();
     }
 
@@ -101,40 +101,7 @@ public class ReflectionRefractionTests {
         ImageWriter imageWriter = new ImageWriter("refractionShadow", 600, 600);
         camera.setImageWriter(imageWriter) //
                 .setRayTracerBase(new RayTracerBasic(scene)) //
-                .renderImage();//
-        camera.writeToImage();
-    }
-
-    /** Produce a picture of a sphere lighted by a spot light */
-    @Test
-    public void vennDiagram() {
-        Camera camera = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
-                .setVPSize(150, 150).setVPDistance(1000);
-
-        scene.geometries.add( //
-                new Sphere(50d, new Point(-20, 15, -50)).setEmission(new Color(BLUE)) //
-                        .setMaterial(new Material().setkD(0.4).setkS(0.3).setnShininess(100).setkT(0.3)),
-                new Sphere(50d, new Point(20, 15, -50)).setEmission(new Color(RED)) //
-                        .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(100).setkT(0.2)),
-                new Sphere(50d, new Point(0, -20, -50)).setEmission(new Color(GREEN)) //
-                        .setMaterial(new Material().setkD(0.5).setkS(0.5).setnShininess(100).setkT(0.3)),
-                new Triangle(new Point(1500, -1500, -1500), new Point(-1500, 1500, -1500),
-                        new Point(670, 670, 3000)) //
-                        .setEmission(new Color(20, 20, 20)) //
-                        .setMaterial(new Material().setkR(1)),
-                new Triangle(new Point(1500, -1500, -1500), new Point(-1500, 1500, -1500),
-                        new Point(-1500, -1500, -2000)) //
-                        .setEmission(new Color(20, 20, 20)) //
-                        .setMaterial(new Material().setkR(new Double3(0.5, 0, 0.4))));
-        scene.lights.add( //
-                new SpotLight(new Color(1000, 600, 0), new Point(-100, -100, 500), new Vector(-1, -1, -2)) //
-                        .setkL(0.0004).setkQ(0.0000006));
-        scene.lights.add(new SpotLight(new Color(800, 500, 0), new Point(-400, 0, -50), new Vector(1, 0, 0))
-                .setkL(0.001).setkQ(0.0001));
-
-        camera.setImageWriter(new ImageWriter("vennDiagram", 500, 500)) //
-                .setRayTracerBase(new RayTracerBasic(scene)) //
-                .renderImage(); //
+                .renderImage();
         camera.writeToImage();
     }
 }

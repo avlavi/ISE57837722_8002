@@ -132,8 +132,9 @@ public class Scene {
                       break;
                     case "sphere":
                         intersectable = new Sphere(
-                                parseDouble(IElement.getAttribute("radius")),
-                                new Point(Double3.parseDouble3(IElement.getAttribute("center")))
+
+                                        parseDouble(IElement.getAttribute("radius")
+                                        ), new Point(Double3.parseDouble3(IElement.getAttribute("center")))
                         );
                         break;
                     case "triangle":

@@ -161,6 +161,7 @@ public class OurPicture2Test {
                 .setRayTracerBase(new RayTracerBasic(scene))
                 .setNumberOfRays(9)
                 .setAdaptive(true)
+                .setThreadsCount(0)
                 .renderImage();
         camera.writeToImage();
     }
