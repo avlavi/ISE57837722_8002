@@ -153,15 +153,22 @@ public class OurPicture2Test {
                         .setkL(1E-5).setkQ(1.5E-7));
         scene.lights.add(
                 new SpotLight(new Color(400, 240, 0), new Point(0, 200, 0), new Vector(-135, -155, -160)) //
-                       .setkL(0.005).setkQ(1.5E-7));
+                       .setkL(0.05).setkQ(1.5E-7));
+
+        scene.lights.add(
+                new SpotLight(new Color(400, 240, 0), new Point(0, -200, 0), new Vector(-135, 200, -240)) //
+                        .setkL(0.09).setkQ(1.5E-7));
+        scene.lights.add(
+                new SpotLight(new Color(400, 240, 0), new Point(0, -300, 0), new Vector(-135, 300, -240)) //
+                        .setkL(0.09).setkQ(1.5E-7));
 
         ImageWriter imagewriter = new ImageWriter("ourPicture3", 1000, 1000);
 
         camera.setImageWriter(imagewriter)
                 .setRayTracerBase(new RayTracerBasic(scene))
-                .setNumberOfRays(9)
+                .setNumberOfRays(1)
                 .setAdaptive(true)
-                .setThreadsCount(0)
+                .setThreadsCount(4)
                 .renderImage();
         camera.writeToImage();
     }

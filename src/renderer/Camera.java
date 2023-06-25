@@ -36,7 +36,7 @@ public class Camera {
     double distance = 0;
     private int numberOfRays = 1;
     private boolean adaptive = false;
-    private int threadsCount = 1;
+    private int threadsCount = 0;
     /** Pixel manager for supporting:
      * <ul>
      * <li>multi-threading</li>
@@ -284,7 +284,7 @@ public class Camera {
                          castRays(nX, nY, j, i);
                     }
                 }
-            } else {
+            } else {//Adaptive super sampling improve is on
                 for (int i = 0; i < nY; i++) {
                     for (int j = 0; j < nX; j++) {
                         imageWriter.writePixel(j, i, AdaptiveSuperSampling(imageWriter.getNx(), imageWriter.getNy(), j, i, numberOfRays));
