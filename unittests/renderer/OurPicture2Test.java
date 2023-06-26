@@ -162,13 +162,13 @@ public class OurPicture2Test {
                 new SpotLight(new Color(400, 240, 0), new Point(0, -300, 0), new Vector(-135, 300, -240)) //
                         .setkL(0.09).setkQ(1.5E-7));
 
-        ImageWriter imagewriter = new ImageWriter("ourPicture3", 1000, 1000);
+        ImageWriter imagewriter = new ImageWriter("ourPicture2", 1000, 1000);
 
         camera.setImageWriter(imagewriter)
                 .setRayTracerBase(new RayTracerBasic(scene))
-                .setNumberOfRays(1)
-                .setAdaptive(true)
-                .setThreadsCount(4)
+                .setNumberOfRays(9)
+                //.setAdaptive(true)
+                //.setThreadsCount(3)
                 .renderImage();
         camera.writeToImage();
     }

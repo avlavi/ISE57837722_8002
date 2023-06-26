@@ -46,5 +46,5 @@ public abstract class RayTracerBase {
      * @param prePoints pre Points
      * @return Pixel color
      */
-    public abstract Color AdaptiveSuperSamplingRec(Point centerP, double Width, double Height, double minWidth, double minHeight, Point cameraLoc, Vector Vright, Vector Vup, List<Point> prePoints);
+    public abstract Color AdaptiveSuperSamplingHelper(Point centerP, double Width, double Height, double minWidth, double minHeight, Point cameraLoc, Vector Vright, Vector Vup, List<Point> prePoints);
 }

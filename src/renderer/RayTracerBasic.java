@@ -1,6 +1,5 @@
 package renderer;
 
-import geometries.Intersectable;
 import lighting.LightSource;
 import primitives.*;
 import scene.Scene;
@@ -23,7 +22,7 @@ public class RayTracerBasic extends RayTracerBase {
 
     private int glossinessRaysNum = 36;
     private double distanceGrid = 25;
-    private double sizeGrid=4;
+    private double sizeGrid = 4;
 
 
     /**
@@ -101,7 +100,6 @@ public class RayTracerBasic extends RayTracerBase {
         if (!kkr.lowerThan(MIN_CALC_COLOR_K)) {
             List<Ray> reflectedRays = constructReflectedRays(gp, ray, material.Glossy);
             Color tempColor1 = Color.BLACK;
-            // each ray
             for (Ray reflectedRay : reflectedRays) {
                 GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
                 tempColor1 = tempColor1.add(reflectedPoint == null ?
@@ -115,7 +113,6 @@ public class RayTracerBasic extends RayTracerBase {
         if (!kkt.lowerThan(MIN_CALC_COLOR_K)) {
             List<Ray> refractedRays = constructRefractedRays(gp, ray, n);
             Color tempColor2 = Color.BLACK;
-            //calculate for each ray
             for (Ray refractedRay : refractedRays) {
                 GeoPoint refractedPoint = findClosestIntersection(refractedRay);
                 tempColor2 = tempColor2.add(refractedPoint == null ?
@@ -210,10 +207,12 @@ public class RayTracerBasic extends RayTracerBase {
         return ktr;
     }
 
-    /**  Produces a reflection bean that starts from
+    /**
+     * Produces a reflection bean that starts from
      * the point where the ray struck from the camera and goes diagonally to the point
+     *
      * @param geoPoint the point where the ray hit from the camera
-     * @param ray the ray from the camera
+     * @param ray      the ray from the camera
      * @return a reflection ray
      */
     private List<Ray> constructReflectedRays(GeoPoint geoPoint, Ray ray, double Glossy) {
@@ -222,7 +221,7 @@ public class RayTracerBasic extends RayTracerBase {
         double nv = alignZero(v.dotProduct(n));
         Vector r = v.subtract(n.scale(2d * nv)).normalize();
 
-        return raysGrid( new Ray(geoPoint.point,r,n),1,Glossy, n);
+        return raysGrid(new Ray(geoPoint.point, r, n), 1, Glossy, n);
     }
 
     /**
@@ -240,41 +239,48 @@ public class RayTracerBasic extends RayTracerBase {
 
     /**
      * Building a beam of rays for transparency and reflection
-     * @param ray The beam coming out of the camera
+     *
+     * @param ray       The beam coming out of the camera
      * @param direction the vector
-     * @param glossy The amount of gloss
-     * @param n normal
+     * @param glossy    The amount of gloss
+     * @param n         normal
      * @return Beam of rays
      */
-    List<Ray> raysGrid(Ray ray, int direction, double glossy, Vector n){
-        int numOfRowCol = isZero(glossy)? 1: (int)Math.ceil(Math.sqrt(glossinessRaysNum));
+    List<Ray> raysGrid(Ray ray, int direction, double glossy, Vector n) {
+        ////////1. if there is no improve - return one ray
+        int numOfRowCol = isZero(glossy) ? 1 : (int) Math.ceil(Math.sqrt(glossinessRaysNum));
         if (numOfRowCol == 1) return List.of(ray);
-        Vector Vup ;
+        Vector Vup;
         Vector dir = ray.getDir();
-        double Ax= Math.abs(dir.getX()), Ay= Math.abs(dir.getY()), Az= Math.abs(dir.getZ());
+
+        ///////2. calculate vUp
+        double Ax = Math.abs(dir.getX()), Ay = Math.abs(dir.getY()), Az = Math.abs(dir.getZ());
         if (Ax < Ay)
-            Vup= Ax < Az ?  new Vector(0, -dir.getZ(), dir.getY()) :
+            Vup = Ax < Az ? new Vector(0, -dir.getZ(), dir.getY()) :
                     new Vector(-dir.getY(), dir.getX(), 0);
         else
-            Vup= Ay < Az ?  new Vector(dir.getZ(), 0, -dir.getX()) :
+            Vup = Ay < Az ? new Vector(dir.getZ(), 0, -dir.getX()) :
                     new Vector(-dir.getY(), dir.getX(), 0);
-        Vector Vright = Vup.crossProduct(dir).normalize();
-        Point pc=ray.getPoint(distanceGrid);
-        double step = glossy/sizeGrid;
-        Point pij=pc.add(Vright.scale(numOfRowCol/2*-step)).add(Vup.scale(numOfRowCol/2*-step));
-        Vector tempRayVector;
-        Point Pij1;
 
+        ///////3. calculate size of one step and the center of the central pixel
+        Vector vRight = Vup.crossProduct(dir).normalize();
+        Point pc = ray.getPoint(distanceGrid);
+        double step = glossy / sizeGrid;
+        Point pij = pc.add(vRight.scale(numOfRowCol / 2 * -step)).add(Vup.scale(numOfRowCol / 2 * -step));
+
+        ///////4. build the grid of rays
+        Vector tempRayVector;
+        Point PijHelp;
         List<Ray> rays = new ArrayList<>();
         Point p0 = ray.getP0();
         rays.add(ray);
         for (int i = 1; i < numOfRowCol; i++) {
             for (int j = 1; j < numOfRowCol; j++) {
-                Pij1=pij.add(Vright.scale(i*step)).add(Vup.scale(j*step));
-                tempRayVector =  Pij1.subtract(p0);
-                if(direction == 1 && n.dotProduct(tempRayVector) < 0) //refraction
+                PijHelp = pij.add(vRight.scale(i * step)).add(Vup.scale(j * step));
+                tempRayVector = PijHelp.subtract(p0);
+                if (direction == 1 && n.dotProduct(tempRayVector) < 0) //refraction
                     rays.add(new Ray(p0, tempRayVector));
-                if(direction == -1 && n.dotProduct(tempRayVector) > 0) //reflection
+                if (direction == -1 && n.dotProduct(tempRayVector) > 0) //reflection
                     rays.add(new Ray(p0, tempRayVector));
             }
         }
@@ -283,62 +289,61 @@ public class RayTracerBasic extends RayTracerBase {
     }
 
     @Override
-    public Color AdaptiveSuperSamplingRec(Point centerP, double Width, double Height, double minWidth, double minHeight, Point cameraLoc, Vector Vright, Vector Vup, List<Point> prePoints) {
+    public Color AdaptiveSuperSamplingHelper(Point centerP, double Width, double Height, double minWidth, double minHeight, Point cameraLoc, Vector vRight, Vector Vup, List<Point> prePoints) {
+        /////1. if we got to the minimum segment - return  the ray
         if (Width < minWidth * 2 || Height < minHeight * 2) {
-            return this.traceRay(new Ray(cameraLoc, centerP.subtract(cameraLoc))) ;
+            return this.traceRay(new Ray(cameraLoc, centerP.subtract(cameraLoc)));
         }
-
-        List<Point> nextCenterPList = new LinkedList<>();
-        List<Point> cornersList = new LinkedList<>();
-        List<Color> colorList = new LinkedList<>();
+        /////2. divides the current segment to 4 sub-segments
+        List<Point> nextCenterPList = new LinkedList<>();//the next center for the next iteration
+        List<Point> cornersList = new LinkedList<>();//the current points
+        List<Color> colorList = new LinkedList<>();//the colors of the current points
         Point tempCorner;
         Ray tempRay;
-        for (int i = -1; i <= 1; i += 2){
+        for (int i = -1; i <= 1; i += 2) {
             for (int j = -1; j <= 1; j += 2) {
-                tempCorner = centerP.add(Vright.scale(i * Width / 2)).add(Vup.scale(j * Height / 2));
+                tempCorner = centerP.add(vRight.scale(i * Width / 2)).add(Vup.scale(j * Height / 2));
                 cornersList.add(tempCorner);
-                if (prePoints == null || !isInList(prePoints, tempCorner)) {
-                    tempRay = new Ray(cameraLoc, tempCorner.subtract(cameraLoc));
-                    nextCenterPList.add(centerP.add(Vright.scale(i * Width / 4)).add(Vup.scale(j * Height / 4)));
-                    colorList.add(traceRay(tempRay));
+                if (prePoints == null || !isInList(prePoints, tempCorner)) {//add the point just if it's not already exist
+                    nextCenterPList.add(centerP.add(vRight.scale(i * Width / 4)).add(Vup.scale(j * Height / 4)));
+                    colorList.add(traceRay(new Ray(cameraLoc, tempCorner.subtract(cameraLoc))));
                 }
             }
         }
-
-
-        if (nextCenterPList == null || nextCenterPList.size() == 0) {
+        /////3. if there are no farther iterations needed
+        if (nextCenterPList == null || nextCenterPList.size() == 0)
             return Color.BLACK;
-        }
 
-
+        /////4. checks if the color are similar enough
         boolean isAllEquals = true;
         Color tempColor = colorList.get(0);
         for (Color color : colorList) {
-            if (!tempColor.isAlmostEquals(color))
+            if (!tempColor.isAlmostEquals(color)) {
                 isAllEquals = false;
+                break;
+            }
         }
-        if (isAllEquals && colorList.size() > 1)
+        if (isAllEquals)
             return tempColor;
 
-
+        /////5. for each of the 4 parts of the grid - continue to the next iteration of the recursion
         tempColor = Color.BLACK;
         for (Point center : nextCenterPList) {
-            tempColor = tempColor.add(AdaptiveSuperSamplingRec(center, Width/2,  Height/2,  minWidth,  minHeight ,  cameraLoc, Vright, Vup, cornersList));
+            tempColor = tempColor.add(AdaptiveSuperSamplingHelper(center, Width / 2, Height / 2, minWidth, minHeight, cameraLoc, vRight, Vup, cornersList));
         }
         return tempColor.reduce(nextCenterPList.size());
-
-
     }
 
     /**
      * Find a point in the list
+     *
      * @param pointsList the list
-     * @param point the point that we look for
+     * @param point      the point that we look for
      * @return
      */
     private boolean isInList(List<Point> pointsList, Point point) {
         for (Point tempPoint : pointsList) {
-            if(point.equals(tempPoint))
+            if (point.equals(tempPoint))
                 return true;
         }
         return false;

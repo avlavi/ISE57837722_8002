@@ -37,7 +37,8 @@ public class Camera {
     private int numberOfRays = 1;
     private boolean adaptive = false;
     private int threadsCount = 0;
-    /** Pixel manager for supporting:
+    /**
+     * Pixel manager for supporting:
      * <ul>
      * <li>multi-threading</li>
      * <li>debug print of progress percentage in Console window/tab</li>
@@ -193,10 +194,10 @@ public class Camera {
         // divide the pixel into segments and find the middle for every segment
         // ratio segment width and length
         List<Ray> rays = new LinkedList<>();
-        double rY = height / nY;
-        double rX = width / nX;
-        double sRY = rY / numberOfRays;
-        double sRX = rX / numberOfRays;
+        double rY = height / nY;//height of a pixel
+        double rX = width / nX;//width of a pixel
+        double sRY = rY / numberOfRays;//height of a segment
+        double sRX = rX / numberOfRays;//width of a segment
 
         // segment[i,j] center
         double sYI, sXJ;
@@ -224,10 +225,10 @@ public class Camera {
     /**
      * Casts a single ray through the specified pixel to compute the color by tracing the ray.
      *
-     * @param nX The number of pixels in the x-axis of the view plane grid.
-     * @param nY The number of pixels in the y-axis of the view plane grid.
-     * @param j  The index of the pixel in the x-axis of the grid.
-     * @param i  The index of the pixel in the y-axis of the grid.
+     * @param nX  The number of pixels in the x-axis of the view plane grid.
+     * @param nY  The number of pixels in the y-axis of the view plane grid.
+     * @param row The index of the pixel in the x-axis of the grid.
+     * @param col The index of the pixel in the y-axis of the grid.
      * @return The computed color for the pixel by tracing the ray.
      */
     private void castRay(int nX, int nY, int col, int row) {
@@ -264,14 +265,11 @@ public class Camera {
     public void renderImage() {
         if (this.rayTracer == null || this.imageWriter == null || this.width == 0 || this.height == 0 || this.distance == 0)
             throw new UnsupportedOperationException("MissingResourcesException");
-        if (numberOfRays == 0) {
-            throw new IllegalArgumentException("num Of Rays can not be 0");
-        }
 
         int nX = imageWriter.getNx();
         int nY = imageWriter.getNy();
         pixelManager = new PixelManager(nY, nX, 100l);
-        if(threadsCount==0) {
+        if (threadsCount == 0) {
             if (numberOfRays == 1) {
                 for (int i = 0; i < nY; i++) {
                     for (int j = 0; j < nX; j++) {
@@ -281,7 +279,7 @@ public class Camera {
             } else if (!adaptive) {//Anti-aliasing* improve is on
                 for (int i = 0; i < nY; i++) {
                     for (int j = 0; j < nX; j++) {
-                         castRays(nX, nY, j, i);
+                        castRays(nX, nY, j, i);
                     }
                 }
             } else {//Adaptive super sampling improve is on
@@ -291,8 +289,7 @@ public class Camera {
                     }
                 }
             }
-        }
-        else { // see further... option 2
+        } else { // see further... option 2
             var threads = new LinkedList<Thread>(); // list of threads
             while (threadsCount-- > 0) // add appropriate number of threads
                 threads.add(new Thread(() -> { // add a thread with its code
@@ -300,38 +297,40 @@ public class Camera {
                     // allocate pixel(row,col) in loop until there are no more pixels
                     while ((pixel = pixelManager.nextPixel()) != null) {
                         // cast ray through pixel (and color it – inside castRay)
-                        if (numberOfRays == 1) castRay(nX, nY, pixel.col(), pixel.row());
-                        else if (!adaptive) castRays(nX, nY, pixel.col(), pixel.row());
-                        else imageWriter.writePixel(pixel.col(), pixel.row(), AdaptiveSuperSampling(imageWriter.getNx(), imageWriter.getNy(), pixel.col(), pixel.row(), numberOfRays));
+                        if (numberOfRays == 1) castRay(nX, nY, pixel.col(), pixel.row());//multithreading
+                        else if (!adaptive) castRays(nX, nY, pixel.col(), pixel.row());//multithreading + antialiasing
+                        else imageWriter.writePixel(pixel.col(), pixel.row(), AdaptiveSuperSampling(imageWriter.getNx(), imageWriter.getNy(), pixel.col(), pixel.row(), numberOfRays));//multithreading + antialiasing +  adaptive
                     }
                 }));
             // start all the threads
             for (var thread : threads) thread.start();
             // wait until all the threads have finished
-            try { for (var thread : threads) thread.join(); } catch (InterruptedException ignore) {}
+            try {
+                for (var thread : threads) thread.join();
+            } catch (InterruptedException ignore) {
+            }
         }
     }
 
     /**
      * Checks the color of the pixel with the help of individual rays and averages between them and only
      * if necessary continues to send beams of rays in recursion
-     * @param nX Pixel length
-     * @param nY Pixel width
-     * @param j The position of the pixel relative to the y-axis
-     * @param i The position of the pixel relative to the x-axis
-     * @param numOfRays The amount of rays sent
+     *
+     * @param nX        Pixel length
+     * @param nY        Pixel width
+     * @param j         The position of the pixel relative to the y-axis
+     * @param i         The position of the pixel relative to the x-axis
+     * @param numOfRays The sqrt of the amount of rays sent
      * @return Pixel color
      */
-    private Color AdaptiveSuperSampling(int nX, int nY, int j, int i,  int numOfRays)  {
-
-        int numOfRaysInRowCol = (int)Math.floor(Math.sqrt(numOfRays));
+    private Color AdaptiveSuperSampling(int nX, int nY, int j, int i, int numOfRays) {
+        //int numOfRaysInRowCol = (int)Math.floor(Math.sqrt(numOfRays));
         Point pIJ = getCenterOfPixel(nX, nY, j, i);
-        double rY = alignZero(height / nY);
-        // the ratio Rx = w/Nx, the width of the pixel
-        double rX = alignZero(width / nX);
-        double PRy = rY/numOfRaysInRowCol;
-        double PRx = rX/numOfRaysInRowCol;
-        return rayTracer.AdaptiveSuperSamplingRec(pIJ, rX, rY, PRx, PRy,this.location,this.vRight, this.vUp,null);
+        double rY = alignZero(height / nY);//the height of the pixel
+        double rX = alignZero(width / nX);//the width of the pixel
+        double PRy = rY / numOfRays;
+        double PRx = rX / numOfRays;
+        return rayTracer.AdaptiveSuperSamplingHelper(pIJ, rX, rY, PRx, PRy, this.location, this.vRight, this.vUp, null);
     }
 
     /**
